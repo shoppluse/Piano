@@ -3,307 +3,292 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Virtual Piano</title>
+<title>Virtual Piano Pro</title>
 <style>
-  :root {
-    --bg: #18191c;
-    --panel: #212226;
-    --text: #e6e7ea;
-    --muted: #8b8d94;
-    --red: #e5252a;
-    --wk: clamp(46px, 5.4vw, 74px);
-    --bk: calc(var(--wk) * 0.6);
-    --wh: clamp(190px, 30vw, 270px);
-    box-sizing: border-box;
-  }
-  * { box-sizing: border-box; }
-  html, body { height: 100%; margin: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    display: flex; flex-direction: column; justify-content: center;
-    padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
-    -webkit-user-select: none; user-select: none;
-  }
-  header {
-    display: flex; align-items: baseline; justify-content: space-between;
-    gap: 16px; padding: 0 clamp(16px, 4vw, 48px) 18px;
-  }
-  h1 { font-size: 1.15rem; font-weight: 600; margin: 0; letter-spacing: .01em; }
-  #now { font-size: 1.15rem; color: var(--muted); min-width: 4ch; text-align: right; font-variant-numeric: tabular-nums; }
-  #now.on { color: var(--text); }
-
-  .board {
-    background: var(--panel);
-    border-top: 4px solid var(--red);
-    padding: 22px clamp(8px, 2vw, 24px) 24px;
-    overflow-x: auto;
-    touch-action: pan-x;
-    box-shadow: 0 -1px 0 rgba(0,0,0,.4), 0 20px 40px rgba(0,0,0,.35);
-  }
-  .keys {
-    position: relative; height: var(--wh);
-    margin: 0 auto; flex: none;
-  }
-
-  .key {
-    position: absolute; top: 0;
-    display: flex; align-items: flex-end; justify-content: center;
-    border: 0; padding: 0 0 10px; cursor: pointer;
-    transition: transform .06s ease-out, box-shadow .06s ease-out, background .06s;
-    touch-action: pan-x;
-  }
-  .key .lbl {
-    min-width: 24px; padding: 3px 6px; border-radius: 6px;
-    font: 600 12px/1.2 system-ui, sans-serif; text-align: center;
-    pointer-events: none;
-  }
-
-  .white {
-    height: 100%; width: var(--wk);
-    background: linear-gradient(#fbfbfb, #e9e9ec);
-    border-radius: 0 0 8px 8px;
-    border-left: 1px solid #b9bac0; border-right: 1px solid #b9bac0;
-    box-shadow: 0 7px 0 #a9aab1, 0 10px 12px rgba(0,0,0,.45);
-    z-index: 1;
-  }
-  .white .lbl { background: #d9dae0; color: #3a3b41; }
-  .white.active {
-    background: linear-gradient(#e4e4e8, #d3d4da);
-    transform: translateY(4px);
-    box-shadow: 0 2px 0 #a9aab1, 0 3px 5px rgba(0,0,0,.4);
-  }
-
-  .black {
-    height: 62%; width: var(--bk);
-    background: linear-gradient(#34353a, #0d0d0f);
-    border-radius: 0 0 6px 6px;
-    box-shadow: 0 6px 0 #000, 0 9px 10px rgba(0,0,0,.6), inset 0 -3px 3px rgba(255,255,255,.08);
-    z-index: 2;
-  }
-  .black .lbl { background: #4a4b52; color: #f0f0f3; }
-  .black.active {
-    background: linear-gradient(#2a2b2f, #08080a);
-    transform: translateY(3px);
-    box-shadow: 0 2px 0 #000, 0 3px 4px rgba(0,0,0,.6), inset 0 -2px 2px rgba(255,255,255,.05);
-  }
-  .key:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
-
-  .hint { color: var(--muted); font-size: .85rem; padding: 18px clamp(16px, 4vw, 48px) 0; margin: 0; max-width: 70ch; line-height: 1.5; }
-
-  #start {
-    position: fixed; inset: 0; z-index: 10;
-    display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px;
-    background: rgba(24,25,28,.96); color: var(--text); border: 0; cursor: pointer;
-    font: inherit; width: 100%;
-  }
-  #start .big { font-size: clamp(1.6rem, 5vw, 2.4rem); font-weight: 700; padding: 16px 36px; border-radius: 12px; background: var(--red); color: #fff; box-shadow: 0 6px 0 #9d1a1e; }
-  #start:active .big { transform: translateY(3px); box-shadow: 0 3px 0 #9d1a1e; }
-  #start .sub { color: var(--muted); font-size: .95rem; }
-  #start[hidden] { display: none; }
+:root{--bg:#18191c;--panel:#212226;--panel2:#2a2b30;--text:#e6e7ea;--muted:#8b8d94;--red:#e5252a;--wk:clamp(36px,4.4vw,60px);--bk:calc(var(--wk)*.6);--wh:clamp(170px,26vw,250px);box-sizing:border-box}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0);-webkit-user-select:none;user-select:none}
+.bar{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;padding:0 clamp(12px,3vw,40px)}
+.brand{font-weight:700;font-size:1.05rem;margin-right:6px}
+.brand span{color:var(--red)}
+.grp{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted)}
+.grp input[type=range]{width:88px;accent-color:var(--red)}
+select,button.b{background:var(--panel2);color:var(--text);border:1px solid #3a3b42;border-radius:8px;padding:7px 11px;font:inherit;font-size:.82rem;cursor:pointer}
+button.b:hover,select:hover{border-color:#5a5b63}
+button.b.on{background:var(--red);border-color:var(--red);color:#fff}
+button.b:disabled{opacity:.4;cursor:default}
+#now{font-size:1.4rem;font-weight:600;min-width:4.2ch;font-variant-numeric:tabular-nums;color:var(--muted)}
+#now.on{color:var(--text)}
+#scope{background:#111214;border-radius:8px;width:150px;height:38px}
+#midi{font-size:.75rem;color:var(--muted)}
+.board{background:var(--panel);border-top:4px solid var(--red);padding:22px clamp(6px,1.5vw,20px) 26px;overflow-x:auto;touch-action:pan-x;box-shadow:0 -1px 0 rgba(0,0,0,.4),0 20px 40px rgba(0,0,0,.35)}
+.keys{position:relative;height:var(--wh);margin:0 auto}
+.key{position:absolute;top:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;border:0;padding:0 0 9px;cursor:pointer;touch-action:pan-x;transition:transform .06s ease-out,box-shadow .06s ease-out,background .06s}
+.lbl{min-width:22px;padding:3px 5px;border-radius:6px;font:600 11px/1.2 system-ui,sans-serif;text-align:center;pointer-events:none}
+.lbl:empty{display:none}
+.oct{font:500 10px system-ui;opacity:.55;pointer-events:none}
+.white{height:100%;width:var(--wk);background:linear-gradient(#fbfbfb,#e9e9ec);border-radius:0 0 8px 8px;border-left:1px solid #b9bac0;border-right:1px solid #b9bac0;box-shadow:0 7px 0 #a9aab1,0 10px 12px rgba(0,0,0,.45);z-index:1}
+.white .lbl{background:#d9dae0;color:#3a3b41}
+.white.sus{background:linear-gradient(#f6e3e3,#e7cfd0)}
+.white.active{background:linear-gradient(#e4e4e8,#d3d4da);transform:translateY(4px);box-shadow:0 2px 0 #a9aab1,0 3px 5px rgba(0,0,0,.4)}
+.black{height:62%;width:var(--bk);background:linear-gradient(#34353a,#0d0d0f);border-radius:0 0 6px 6px;box-shadow:0 6px 0 #000,0 9px 10px rgba(0,0,0,.6),inset 0 -3px 3px rgba(255,255,255,.08);z-index:2}
+.black .lbl{background:#4a4b52;color:#f0f0f3}
+.black.sus{background:linear-gradient(#4a2a2c,#1a0c0d)}
+.black.active{background:linear-gradient(#2a2b2f,#08080a);transform:translateY(3px);box-shadow:0 2px 0 #000,0 3px 4px rgba(0,0,0,.6),inset 0 -2px 2px rgba(255,255,255,.05)}
+.hint{color:var(--muted);font-size:.8rem;padding:0 clamp(12px,3vw,40px);margin:0;line-height:1.5}
+kbd{background:var(--panel2);border-radius:4px;padding:1px 6px;font:inherit;color:var(--text)}
+#start{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:rgba(24,25,28,.97);color:var(--text);border:0;cursor:pointer;font:inherit;width:100%}
+#start .big{font-size:clamp(1.6rem,5vw,2.4rem);font-weight:700;padding:16px 36px;border-radius:12px;background:var(--red);color:#fff;box-shadow:0 6px 0 #9d1a1e}
+#start:active .big{transform:translateY(3px);box-shadow:0 3px 0 #9d1a1e}
+#start .sub{color:var(--muted);font-size:.95rem}
+#start[hidden]{display:none}
 </style>
 </head>
 <body>
+<button id="start" type="button"><span class="big">Click to Start</span><span class="sub">Turn up your volume. Play with mouse, touch, keyboard or a MIDI device.</span></button>
 
-<button id="start" type="button" aria-label="Click to start">
-  <span class="big">Click to Start</span>
-  <span class="sub">Turn up your volume, then play with the mouse, touch or keyboard.</span>
-</button>
+<div class="bar">
+  <div class="brand">Virtual Piano <span>Pro</span></div>
+  <div id="now">&nbsp;</div>
+  <select id="pre" aria-label="Sound"><option value="grand">Grand piano</option><option value="epiano">Electric piano</option><option value="organ">Organ</option><option value="synth">Synth</option></select>
+  <label class="grp">Volume <input id="vol" type="range" min="0" max="1" step=".01" value=".8"></label>
+  <label class="grp">Reverb <input id="rev" type="range" min="0" max="1" step=".01" value=".25"></label>
+  <label class="grp">Attack <input id="atk" type="range" min=".005" max=".5" step=".005" value=".012"></label>
+  <label class="grp">Release <input id="rel" type="range" min=".05" max="2.5" step=".05" value=".45"></label>
+  <div class="grp"><button class="b" id="od">Oct −</button><span id="ov">0</span><button class="b" id="ou">Oct +</button></div>
+  <button class="b" id="sus">Sustain</button>
+  <button class="b" id="lab">Labels: keys</button>
+  <button class="b" id="rec">● Rec</button>
+  <button class="b" id="play" disabled>▶ Play</button>
+  <canvas id="scope" width="300" height="76"></canvas>
+  <span id="midi">MIDI: off</span>
+</div>
 
-<header>
-  <h1>Virtual Piano</h1>
-  <div id="now" aria-live="polite">&nbsp;</div>
-</header>
+<main class="board"><div class="keys" id="keys"></div></main>
 
-<main class="board">
-  <div class="keys" id="keys"></div>
-</main>
-
-<p class="hint">Play with the highlighted keys on your keyboard: Z–M row for the low octave, Q–U for the middle, I–] for the high. Number keys and S, D, G, H, J play the black keys.</p>
+<p class="hint">Keys: <kbd>←</kbd> <kbd>→</kbd> shift octave, <kbd>Space</kbd> sustain pedal. Click lower on a key to play it louder. Connect a MIDI keyboard for velocity and pedal support.</p>
 
 <script>
 (() => {
-  'use strict';
+'use strict';
+const $ = id => document.getElementById(id);
+const START = 36, END = 96;                       // C2 .. C7
+const CHARS = 'zsxdcvgbhnjm' + 'q2w3er5t6y7u' + 'i9o0p[=]';
+const NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const isBlack = m => [1,3,6,8,10].includes(m % 12);
+const noteName = m => NAMES[m % 12] + (Math.floor(m / 12) - 1);
 
-  // ---------- Layout: C3 (MIDI 48) to G5 (MIDI 79) ----------
-  const START = 48, END = 79;
-  // Characters assigned to each semitone from C3 upward
-  const CHARS = 'zsxdcvgbhnjm' + 'q2w3er5t6y7u' + 'i9o0p[=]';
-  const NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-  const isBlack = m => [1,3,6,8,10].includes(m % 12);
-  const noteName = m => NAMES[m % 12] + (Math.floor(m / 12) - 1);
+// ---------- Build keys ----------
+const keysEl = $('keys'), nowEl = $('now'), els = new Map();
+let wc = 0;
+for (let m = START; m <= END; m++) {
+  const k = document.createElement('button');
+  k.type = 'button'; k.tabIndex = -1; k.dataset.midi = m;
+  k.className = 'key ' + (isBlack(m) ? 'black' : 'white');
+  k.setAttribute('aria-label', noteName(m));
+  if (isBlack(m)) k.style.left = `calc(var(--wk)*${wc} - var(--bk)/2)`;
+  else { k.style.left = `calc(var(--wk)*${wc})`; wc++; }
+  const l = document.createElement('span'); l.className = 'lbl'; k.appendChild(l);
+  if (m % 12 === 0) { const o = document.createElement('span'); o.className = 'oct'; o.textContent = noteName(m); k.appendChild(o); }
+  keysEl.appendChild(k); els.set(m, k);
+}
+keysEl.style.width = `calc(var(--wk)*${wc})`;
 
-  const keysEl = document.getElementById('keys');
-  const nowEl = document.getElementById('now');
-  const keyEls = new Map();   // midi -> element
-  const charToMidi = new Map();
-
-  let whiteCount = 0;
-  for (let m = START; m <= END; m++) {
-    const ch = CHARS[m - START];
-    const black = isBlack(m);
-    const el = document.createElement('button');
-    el.type = 'button';
-    el.className = 'key ' + (black ? 'black' : 'white');
-    el.dataset.midi = m;
-    el.setAttribute('aria-label', noteName(m));
-    el.tabIndex = -1;
-    if (black) el.style.left = `calc(var(--wk) * ${whiteCount} - var(--bk) / 2)`;
-    else { el.style.left = `calc(var(--wk) * ${whiteCount})`; whiteCount++; }
-    const lbl = document.createElement('span');
-    lbl.className = 'lbl';
-    lbl.textContent = ch.toUpperCase();
-    el.appendChild(lbl);
-    keysEl.appendChild(el);
-    keyEls.set(m, el);
-    charToMidi.set(ch, m);
-  }
-  keysEl.style.width = `calc(var(--wk) * ${whiteCount})`;
-
-  // ---------- Audio engine ----------
-  let ctx = null, master = null;
-  const ENV = { attack: 0.012, decay: 0.9, sustain: 0.28, release: 0.45 };
-  const voices = new Map();   // midi -> voice
-
-  function initAudio() {
-    if (ctx) return;
-    ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const comp = ctx.createDynamicsCompressor();
-    comp.threshold.value = -14; comp.ratio.value = 4; comp.attack.value = 0.005; comp.release.value = 0.2;
-    master = ctx.createGain();
-    master.gain.value = 0.8;
-    master.connect(comp); comp.connect(ctx.destination);
-  }
-
-  function noteOn(m) {
-    if (!ctx || voices.has(m)) return;           // no duplicate triggering
-    const f = 440 * Math.pow(2, (m - 69) / 12);
-    const t = ctx.currentTime;
-    const peak = 0.32 * (m < 60 ? 1 : 0.9);
-
-    const amp = ctx.createGain();
-    amp.gain.setValueAtTime(0.0001, t);
-    amp.gain.linearRampToValueAtTime(peak, t + ENV.attack);                   // Attack
-    amp.gain.setTargetAtTime(peak * ENV.sustain, t + ENV.attack, ENV.decay / 3); // Decay -> Sustain
-
-    // Brightness fades after the strike, like a hammered string
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.Q.value = 0.5;
-    filter.frequency.setValueAtTime(Math.min(f * 9, 9000), t);
-    filter.frequency.setTargetAtTime(Math.min(f * 3, 3000), t + 0.01, 0.5);
-
-    const parts = [
-      { type: 'triangle', mult: 1,   gain: 1.0,  detune: 0 },
-      { type: 'triangle', mult: 1,   gain: 0.5,  detune: 4 },
-      { type: 'sine',     mult: 2,   gain: 0.32, detune: 0 },
-      { type: 'sine',     mult: 3,   gain: 0.12, detune: 0 },
-      { type: 'sine',     mult: 0.5, gain: 0.18, detune: 0 }
-    ];
-    const oscs = parts.map(p => {
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = p.type;
-      o.frequency.value = f * p.mult;
-      o.detune.value = p.detune;
-      g.gain.value = p.gain / 2;
-      o.connect(g); g.connect(filter);
-      o.start(t);
-      return o;
-    });
-    filter.connect(amp); amp.connect(master);
-    voices.set(m, { amp, oscs, filter });
-  }
-
-  function noteOff(m) {
-    const v = voices.get(m);
-    if (!v) return;
-    voices.delete(m);
-    const t = ctx.currentTime;
-    const g = v.amp.gain;
-    if (g.cancelAndHoldAtTime) g.cancelAndHoldAtTime(t);
-    else { const cur = g.value; g.cancelScheduledValues(t); g.setValueAtTime(cur, t); }
-    g.setTargetAtTime(0, t, ENV.release / 4);       // Release (smooth, no click)
-    const stopAt = t + ENV.release + 0.15;
-    v.oscs.forEach(o => o.stop(stopAt));
-    v.oscs[0].onended = () => { v.amp.disconnect(); v.filter.disconnect(); };
-  }
-
-  // ---------- Press / release (shared by mouse, touch, keyboard) ----------
-  function press(m) {
-    if (voices.has(m)) return;
-    noteOn(m);
-    keyEls.get(m).classList.add('active');
-    nowEl.textContent = noteName(m);
-    nowEl.classList.add('on');
-  }
-  function release(m) {
-    noteOff(m);
-    keyEls.get(m).classList.remove('active');
-    if (!voices.size) nowEl.classList.remove('on');
-  }
-  function releaseAll() { [...voices.keys()].forEach(release); }
-
-  // Pointer (mouse + touch + pen), including drag-to-glide with a held button
-  const pointerNote = new Map();   // pointerId -> midi
-  const midiOf = el => { const k = el && el.closest && el.closest('.key'); return k ? +k.dataset.midi : null; };
-
-  keysEl.addEventListener('pointerdown', e => {
-    const m = midiOf(e.target);
-    if (m === null) return;
-    if (e.pointerType === 'mouse' && e.button !== 0) return;
-    e.preventDefault();
-    pointerNote.set(e.pointerId, m);
-    press(m);
+// ---------- Computer-keyboard mapping with octave shift ----------
+let shift = 0, labelMode = 'keys';
+const charMap = new Map();
+function remap() {
+  charMap.clear();
+  const base = 48 + shift * 12;
+  [...CHARS].forEach((c, i) => { if (base + i >= START && base + i <= END) charMap.set(c, base + i); });
+  els.forEach((k, m) => {
+    const i = m - base, c = i >= 0 && i < CHARS.length ? CHARS[i].toUpperCase() : '';
+    k.firstChild.textContent = labelMode === 'keys' ? c : (isBlack(m) ? '' : NAMES[m % 12]);
   });
-  keysEl.addEventListener('pointerover', e => {
-    if (e.pointerType !== 'mouse' || !(e.buttons & 1)) return;
-    const m = midiOf(e.target);
-    if (m === null) return;
-    const prev = pointerNote.get(e.pointerId);
-    if (prev === m) return;
-    if (prev !== undefined) release(prev);
-    pointerNote.set(e.pointerId, m);
-    press(m);
-  });
-  const endPointer = e => {
-    const m = pointerNote.get(e.pointerId);
-    if (m === undefined) return;
-    pointerNote.delete(e.pointerId);
-    release(m);
-  };
-  window.addEventListener('pointerup', endPointer);
-  window.addEventListener('pointercancel', endPointer);
-  keysEl.addEventListener('contextmenu', e => e.preventDefault());
+  $('ov').textContent = (shift > 0 ? '+' : '') + shift;
+}
+$('od').onclick = () => { if (shift > -1) { shift--; remap(); } };
+$('ou').onclick = () => { if (shift < 2) { shift++; remap(); } };
+$('lab').onclick = e => { labelMode = labelMode === 'keys' ? 'notes' : 'keys'; e.target.textContent = 'Labels: ' + labelMode; remap(); };
+remap();
 
-  // Physical keyboard
-  const held = new Set();
-  window.addEventListener('keydown', e => {
-    if (e.ctrlKey || e.metaKey || e.altKey) return;
-    const ch = e.key.toLowerCase();
-    if (!charToMidi.has(ch)) return;
-    e.preventDefault();
-    if (e.repeat || held.has(ch)) return;        // ignore auto-repeat while held
-    held.add(ch);
-    press(charToMidi.get(ch));
-  });
-  window.addEventListener('keyup', e => {
-    const ch = e.key.toLowerCase();
-    if (!held.has(ch)) return;
-    held.delete(ch);
-    release(charToMidi.get(ch));
-  });
-  window.addEventListener('blur', () => { held.clear(); pointerNote.clear(); releaseAll(); });
+// ---------- Audio engine ----------
+let ctx, master, dry, wet, analyser;
+const PRE = {
+  grand: { parts: [['triangle',1,1,0],['triangle',1,.5,4],['sine',2,.32,0],['sine',3,.12,0],['sine',.5,.18,0]], decay: .9, sus: .28, b0: 9, b1: 3 },
+  epiano:{ parts: [['sine',1,1,0],['sine',2,.35,0],['sine',7,.07,0],['triangle',1,.25,3]], decay: .7, sus: .35, b0: 5, b1: 2.5 },
+  organ: { parts: [['sine',1,.9,0],['sine',2,.6,0],['sine',3,.4,0],['sine',4,.3,0],['sine',.5,.5,0]], decay: .05, sus: 1, b0: 6, b1: 6 },
+  synth: { parts: [['sawtooth',1,.5,-7],['sawtooth',1,.5,7],['square',.5,.25,0]], decay: .4, sus: .6, b0: 6, b1: 2.5 }
+};
+function initAudio() {
+  if (ctx) return;
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const len = ctx.sampleRate * 2.2, ir = ctx.createBuffer(2, len, ctx.sampleRate);
+  for (let c = 0; c < 2; c++) { const d = ir.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+  const conv = ctx.createConvolver(); conv.buffer = ir;
+  dry = ctx.createGain(); wet = ctx.createGain();
+  master = ctx.createGain();
+  const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4;
+  analyser = ctx.createAnalyser(); analyser.fftSize = 512;
+  conv.connect(wet); dry.connect(master); wet.connect(master);
+  master.connect(comp); comp.connect(analyser); analyser.connect(ctx.destination);
+  ctx.bus = ctx.createGain(); ctx.bus.connect(dry); ctx.bus.connect(conv);
+  applyMix(); draw();
+}
+function applyMix() {
+  if (!ctx) return;
+  const t = ctx.currentTime, r = +$('rev').value;
+  master.gain.setTargetAtTime(+$('vol').value, t, .02);
+  dry.gain.setTargetAtTime(1 - r * .4, t, .02);
+  wet.gain.setTargetAtTime(r * .9, t, .02);
+}
+['vol','rev'].forEach(i => $(i).addEventListener('input', applyMix));
 
-  // ---------- Start overlay ----------
-  const startBtn = document.getElementById('start');
-  startBtn.addEventListener('click', async () => {
-    initAudio();
-    try { await ctx.resume(); } catch (_) {}
-    startBtn.hidden = true;
+const voices = new Map();
+function noteOn(m, v) {
+  const P = PRE[$('pre').value], t = ctx.currentTime, f = 440 * Math.pow(2, (m - 69) / 12);
+  const A = +$('atk').value, peak = .06 + .3 * v;
+  const amp = ctx.createGain();
+  amp.gain.setValueAtTime(.0001, t);
+  amp.gain.linearRampToValueAtTime(peak, t + A);                         // Attack
+  amp.gain.setTargetAtTime(peak * P.sus, t + A, P.decay / 3);            // Decay -> Sustain
+  const fl = ctx.createBiquadFilter(); fl.type = 'lowpass'; fl.Q.value = .5;
+  fl.frequency.setValueAtTime(Math.min(f * P.b0 * (.6 + v * .6), 12000), t);
+  fl.frequency.setTargetAtTime(Math.min(f * P.b1, 6000), t + .01, .5);
+  const oscs = P.parts.map(([type, mult, g, det]) => {
+    const o = ctx.createOscillator(), gn = ctx.createGain();
+    o.type = type; o.frequency.value = f * mult; o.detune.value = det; gn.gain.value = g / 2.2;
+    o.connect(gn); gn.connect(fl); o.start(t); return o;
   });
-  document.addEventListener('visibilitychange', () => { if (document.hidden) releaseAll(); });
+  fl.connect(amp); amp.connect(ctx.bus);
+  voices.set(m, { amp, oscs, fl });
+}
+function noteOff(m, R) {
+  const v = voices.get(m); if (!v) return; voices.delete(m);
+  R = R ?? +$('rel').value;
+  const t = ctx.currentTime, g = v.amp.gain;
+  if (g.cancelAndHoldAtTime) g.cancelAndHoldAtTime(t); else { const c = g.value; g.cancelScheduledValues(t); g.setValueAtTime(c, t); }
+  g.setTargetAtTime(0, t, R / 4);                                        // Release
+  v.oscs.forEach(o => o.stop(t + R + .15));
+  v.oscs[0].onended = () => { v.amp.disconnect(); v.fl.disconnect(); };
+}
+
+// ---------- Press / release with sustain pedal ----------
+const down = new Set(), sustained = new Set();
+let pedal = false, recording = false, events = [], t0 = 0, timers = [];
+function press(m, v = .75, fromPlayback) {
+  if (!ctx || m < START || m > END || down.has(m)) return;
+  down.add(m);
+  if (voices.has(m)) noteOff(m, .06);                                    // re-strike a sustained note
+  sustained.delete(m);
+  noteOn(m, v);
+  const k = els.get(m); k.classList.remove('sus'); k.classList.add('active');
+  nowEl.textContent = noteName(m); nowEl.classList.add('on');
+  if (recording && !fromPlayback) events.push({ t: performance.now() - t0, m, v, on: 1 });
+}
+function release(m, fromPlayback) {
+  if (!down.has(m)) return;
+  down.delete(m);
+  const k = els.get(m); k.classList.remove('active');
+  if (pedal) { sustained.add(m); k.classList.add('sus'); } else noteOff(m);
+  if (!down.size) nowEl.classList.remove('on');
+  if (recording && !fromPlayback) events.push({ t: performance.now() - t0, m, on: 0 });
+}
+function setPedal(on) {
+  if (!ctx || pedal === on) return;
+  pedal = on; $('sus').classList.toggle('on', on);
+  if (!on) { sustained.forEach(m => { noteOff(m); els.get(m).classList.remove('sus'); }); sustained.clear(); }
+}
+function releaseAll() { setPedal(false); [...down].forEach(m => release(m)); [...voices.keys()].forEach(m => noteOff(m)); }
+
+// ---------- Pointer input (velocity from where you press the key) ----------
+const ptr = new Map();
+const midiOf = el => { const k = el && el.closest && el.closest('.key'); return k ? +k.dataset.midi : null; };
+const velAt = (e, k) => { const r = k.getBoundingClientRect(); return Math.min(1, Math.max(.25, .3 + .7 * ((e.clientY - r.top) / r.height))); };
+keysEl.addEventListener('pointerdown', e => {
+  const m = midiOf(e.target); if (m === null || (e.pointerType === 'mouse' && e.button !== 0)) return;
+  e.preventDefault(); ptr.set(e.pointerId, m); press(m, velAt(e, els.get(m)));
+});
+keysEl.addEventListener('pointerover', e => {
+  if (e.pointerType !== 'mouse' || !(e.buttons & 1)) return;
+  const m = midiOf(e.target); if (m === null) return;
+  const p = ptr.get(e.pointerId); if (p === m) return;
+  if (p !== undefined) release(p);
+  ptr.set(e.pointerId, m); press(m, velAt(e, els.get(m)));
+});
+const endPtr = e => { const m = ptr.get(e.pointerId); if (m === undefined) return; ptr.delete(e.pointerId); release(m); };
+addEventListener('pointerup', endPtr); addEventListener('pointercancel', endPtr);
+keysEl.addEventListener('contextmenu', e => e.preventDefault());
+
+// ---------- Physical keyboard ----------
+const held = new Map();   // char -> midi (locked at keydown so octave shifts never strand a note)
+addEventListener('keydown', e => {
+  if (e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|SELECT)$/.test(e.target.tagName) && e.key.length === 1 && e.key !== ' ') return;
+  if (e.key === ' ') { if (e.target.tagName === 'BUTTON') return; e.preventDefault(); setPedal(true); return; }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { if (e.target.tagName === 'INPUT') return; e.preventDefault(); if (!e.repeat) (e.key === 'ArrowLeft' ? $('od') : $('ou')).click(); return; }
+  const c = e.key.toLowerCase();
+  if (!charMap.has(c)) return;
+  e.preventDefault();
+  if (e.repeat || held.has(c)) return;                                  // no duplicate triggers
+  held.set(c, charMap.get(c)); press(held.get(c));
+});
+addEventListener('keyup', e => {
+  if (e.key === ' ') { setPedal(false); return; }
+  const c = e.key.toLowerCase();
+  if (held.has(c)) { release(held.get(c)); held.delete(c); }
+});
+addEventListener('blur', () => { held.clear(); ptr.clear(); releaseAll(); });
+
+// Sustain button
+$('sus').addEventListener('pointerdown', e => { e.preventDefault(); setPedal(true); });
+$('sus').addEventListener('pointerup', () => setPedal(false));
+$('sus').addEventListener('pointerleave', () => setPedal(false));
+
+// ---------- Record / playback ----------
+$('rec').onclick = () => {
+  if (!ctx) return;
+  recording = !recording; $('rec').classList.toggle('on', recording);
+  $('rec').textContent = recording ? '■ Stop' : '● Rec';
+  if (recording) { events = []; t0 = performance.now(); }
+  $('play').disabled = recording || !events.length;
+};
+$('play').onclick = () => {
+  if (timers.length) { timers.forEach(clearTimeout); timers = []; [...down].forEach(m => release(m, true)); $('play').textContent = '▶ Play'; return; }
+  $('play').textContent = '■ Stop';
+  events.forEach(ev => timers.push(setTimeout(() => ev.on ? press(ev.m, ev.v, true) : release(ev.m, true), ev.t)));
+  const end = events.length ? events[events.length - 1].t + 600 : 0;
+  timers.push(setTimeout(() => { timers = []; $('play').textContent = '▶ Play'; }, end));
+};
+
+// ---------- Web MIDI ----------
+if (navigator.requestMIDIAccess) navigator.requestMIDIAccess().then(a => {
+  const hook = () => { let n = 0; a.inputs.forEach(i => { n++; i.onmidimessage = ({ data: [s, d1, d2] }) => {
+    const c = s & 240;
+    if (c === 144 && d2 > 0) press(d1, d2 / 127);
+    else if (c === 128 || c === 144) release(d1);
+    else if (c === 176 && d1 === 64) setPedal(d2 >= 64);
+  }; }); $('midi').textContent = n ? `MIDI: ${n} device${n > 1 ? 's' : ''}` : 'MIDI: none'; };
+  a.onstatechange = hook; hook();
+}).catch(() => {});
+
+// ---------- Oscilloscope ----------
+const cv = $('scope'), cc = cv.getContext('2d'), buf = new Uint8Array(512);
+function draw() {
+  requestAnimationFrame(draw);
+  analyser.getByteTimeDomainData(buf);
+  cc.clearRect(0, 0, cv.width, cv.height);
+  cc.strokeStyle = '#e5252a'; cc.lineWidth = 2; cc.beginPath();
+  for (let i = 0; i < buf.length; i++) { const x = i / buf.length * cv.width, y = buf[i] / 255 * cv.height; i ? cc.lineTo(x, y) : cc.moveTo(x, y); }
+  cc.stroke();
+}
+
+// ---------- Start ----------
+$('start').addEventListener('click', async () => {
+  initAudio(); try { await ctx.resume(); } catch (_) {}
+  $('start').hidden = true;
+  const b = document.querySelector('.board'); b.scrollLeft = (b.scrollWidth - b.clientWidth) / 2;
+});
 })();
 </script>
 </body>
