@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Virtual Piano</title>
+<style>
+  :root {
+    --bg: #18191c;
+    --panel: #212226;
+    --text: #e6e7ea;
+    --muted: #8b8d94;
+    --red: #e5252a;
+    --wk: clamp(46px, 5.4vw, 74px);
+    --bk: calc(var(--wk) * 0.6);
+    --wh: clamp(190px, 30vw, 270px);
+    box-sizing: border-box;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+    -webkit-user-select: none; user-select: none;
+  }
+  header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 16px; padding: 0 clamp(16px, 4vw, 48px) 18px;
+  }
+  h1 { font-size: 1.15rem; font-weight: 600; margin: 0; letter-spacing: .01em; }
+  #now { font-size: 1.15rem; color: var(--muted); min-width: 4ch; text-align: right; font-variant-numeric: tabular-nums; }
+  #now.on { color: var(--text); }
+
+  .board {
+    background: var(--panel);
+    border-top: 4px solid var(--red);
+    padding: 22px clamp(8px, 2vw, 24px) 24px;
+    overflow-x: auto;
+    touch-action: pan-x;
+    box-shadow: 0 -1px 0 rgba(0,0,0,.4), 0 20px 40px rgba(0,0,0,.35);
+  }
+  .keys {
+    position: relative; height: var(--wh);
+    margin: 0 auto; flex: none;
+  }
+
+  .key {
+    position: absolute; top: 0;
+    display: flex; align-items: flex-end; justify-content: center;
+    border: 0; padding: 0 0 10px; cursor: pointer;
+    transition: transform .06s ease-out, box-shadow .06s ease-out, background .06s;
+    touch-action: pan-x;
+  }
+  .key .lbl {
+    min-width: 24px; padding: 3px 6px; border-radius: 6px;
+    font: 600 12px/1.2 system-ui, sans-serif; text-align: center;
+    pointer-events: none;
+  }
+
+  .white {
+    height: 100%; width: var(--wk);
+    background: linear-gradient(#fbfbfb, #e9e9ec);
+    border-radius: 0 0 8px 8px;
+    border-left: 1px solid #b9bac0; border-right: 1px solid #b9bac0;
+    box-shadow: 0 7px 0 #a9aab1, 0 10px 12px rgba(0,0,0,.45);
+    z-index: 1;
+  }
+  .white .lbl { background: #d9dae0; color: #3a3b41; }
+  .white.active {
+    background: linear-gradient(#e4e4e8, #d3d4da);
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #a9aab1, 0 3px 5px rgba(0,0,0,.4);
+  }
+
+  .black {
+    height: 62%; width: var(--bk);
+    background: linear-gradient(#34353a, #0d0d0f);
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 6px 0 #000, 0 9px 10px rgba(0,0,0,.6), inset 0 -3px 3px rgba(255,255,255,.08);
+    z-index: 2;
+  }
+  .black .lbl { background: #4a4b52; color: #f0f0f3; }
+  .black.active {
+    background: linear-gradient(#2a2b2f, #08080a);
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #000, 0 3px 4px rgba(0,0,0,.6), inset 0 -2px 2px rgba(255,255,255,.05);
+  }
+  .key:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+  .hint { color: var(--muted); font-size: .85rem; padding: 18px clamp(16px, 4vw, 48px) 0; margin: 0; max-width: 70ch; line-height: 1.5; }
+
+  #start {
+    position: fixed; inset: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px;
+    background: rgba(24,25,28,.96); color: var(--text); border: 0; cursor: pointer;
+    font: inherit; width: 100%;
+  }
+  #start .big { font-size: clamp(1.6rem, 5vw, 2.4rem); font-weight: 700; padding: 16px 36px; border-radius: 12px; background: var(--red); color: #fff; box-shadow: 0 6px 0 #9d1a1e; }
+  #start:active .big { transform: translateY(3px); box-shadow: 0 3px 0 #9d1a1e; }
+  #start .sub { color: var(--muted); font-size: .95rem; }
+  #start[hidden] { display: none; }
+</style>
+</head>
+<body>
+
+<button id="start" type="button" aria-label="Click to start">
+  <span class="big">Click to Start</span>
+  <span class="sub">Turn up your volume, then play with the mouse, touch or keyboard.</span>
+</button>
+
+<header>
+  <h1>Virtual Piano</h1>
+  <div id="now" aria-live="polite">&nbsp;</div>
+</header>
+
+<main class="board">
+  <div class="keys" id="keys"></div>
+</main>
+
+<p class="hint">Play with the highlighted keys on your keyboard: Z–M row for the low octave, Q–U for the middle, I–] for the high. Number keys and S, D, G, H, J play the black keys.</p>
+
+<script>
+(() => {
+  'use strict';
+
+  // ---------- Layout: C3 (MIDI 48) to G5 (MIDI 79) ----------
+  const START = 48, END = 79;
+  // Characters assigned to each semitone from C3 upward
+  const CHARS = 'zsxdcvgbhnjm' + 'q2w3er5t6y7u' + 'i9o0p[=]';
+  const NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  const isBlack = m => [1,3,6,8,10].includes(m % 12);
+  const noteName = m => NAMES[m % 12] + (Math.floor(m / 12) - 1);
+
+  const keysEl = document.getElementById('keys');
+  const nowEl = document.getElementById('now');
+  const keyEls = new Map();   // midi -> element
+  const charToMidi = new Map();
+
+  let whiteCount = 0;
+  for (let m = START; m <= END; m++) {
+    const ch = CHARS[m - START];
+    const black = isBlack(m);
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'key ' + (black ? 'black' : 'white');
+    el.dataset.midi = m;
+    el.setAttribute('aria-label', noteName(m));
+    el.tabIndex = -1;
+    if (black) el.style.left = `calc(var(--wk) * ${whiteCount} - var(--bk) / 2)`;
+    else { el.style.left = `calc(var(--wk) * ${whiteCount})`; whiteCount++; }
+    const lbl = document.createElement('span');
+    lbl.className = 'lbl';
+    lbl.textContent = ch.toUpperCase();
+    el.appendChild(lbl);
+    keysEl.appendChild(el);
+    keyEls.set(m, el);
+    charToMidi.set(ch, m);
+  }
+  keysEl.style.width = `calc(var(--wk) * ${whiteCount})`;
+
+  // ---------- Audio engine ----------
+  let ctx = null, master = null;
+  const ENV = { attack: 0.012, decay: 0.9, sustain: 0.28, release: 0.45 };
+  const voices = new Map();   // midi -> voice
+
+  function initAudio() {
+    if (ctx) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -14; comp.ratio.value = 4; comp.attack.value = 0.005; comp.release.value = 0.2;
+    master = ctx.createGain();
+    master.gain.value = 0.8;
+    master.connect(comp); comp.connect(ctx.destination);
+  }
+
+  function noteOn(m) {
+    if (!ctx || voices.has(m)) return;           // no duplicate triggering
+    const f = 440 * Math.pow(2, (m - 69) / 12);
+    const t = ctx.currentTime;
+    const peak = 0.32 * (m < 60 ? 1 : 0.9);
+
+    const amp = ctx.createGain();
+    amp.gain.setValueAtTime(0.0001, t);
+    amp.gain.linearRampToValueAtTime(peak, t + ENV.attack);                   // Attack
+    amp.gain.setTargetAtTime(peak * ENV.sustain, t + ENV.attack, ENV.decay / 3); // Decay -> Sustain
+
+    // Brightness fades after the strike, like a hammered string
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.Q.value = 0.5;
+    filter.frequency.setValueAtTime(Math.min(f * 9, 9000), t);
+    filter.frequency.setTargetAtTime(Math.min(f * 3, 3000), t + 0.01, 0.5);
+
+    const parts = [
+      { type: 'triangle', mult: 1,   gain: 1.0,  detune: 0 },
+      { type: 'triangle', mult: 1,   gain: 0.5,  detune: 4 },
+      { type: 'sine',     mult: 2,   gain: 0.32, detune: 0 },
+      { type: 'sine',     mult: 3,   gain: 0.12, detune: 0 },
+      { type: 'sine',     mult: 0.5, gain: 0.18, detune: 0 }
+    ];
+    const oscs = parts.map(p => {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = p.type;
+      o.frequency.value = f * p.mult;
+      o.detune.value = p.detune;
+      g.gain.value = p.gain / 2;
+      o.connect(g); g.connect(filter);
+      o.start(t);
+      return o;
+    });
+    filter.connect(amp); amp.connect(master);
+    voices.set(m, { amp, oscs, filter });
+  }
+
+  function noteOff(m) {
+    const v = voices.get(m);
+    if (!v) return;
+    voices.delete(m);
+    const t = ctx.currentTime;
+    const g = v.amp.gain;
+    if (g.cancelAndHoldAtTime) g.cancelAndHoldAtTime(t);
+    else { const cur = g.value; g.cancelScheduledValues(t); g.setValueAtTime(cur, t); }
+    g.setTargetAtTime(0, t, ENV.release / 4);       // Release (smooth, no click)
+    const stopAt = t + ENV.release + 0.15;
+    v.oscs.forEach(o => o.stop(stopAt));
+    v.oscs[0].onended = () => { v.amp.disconnect(); v.filter.disconnect(); };
+  }
+
+  // ---------- Press / release (shared by mouse, touch, keyboard) ----------
+  function press(m) {
+    if (voices.has(m)) return;
+    noteOn(m);
+    keyEls.get(m).classList.add('active');
+    nowEl.textContent = noteName(m);
+    nowEl.classList.add('on');
+  }
+  function release(m) {
+    noteOff(m);
+    keyEls.get(m).classList.remove('active');
+    if (!voices.size) nowEl.classList.remove('on');
+  }
+  function releaseAll() { [...voices.keys()].forEach(release); }
+
+  // Pointer (mouse + touch + pen), including drag-to-glide with a held button
+  const pointerNote = new Map();   // pointerId -> midi
+  const midiOf = el => { const k = el && el.closest && el.closest('.key'); return k ? +k.dataset.midi : null; };
+
+  keysEl.addEventListener('pointerdown', e => {
+    const m = midiOf(e.target);
+    if (m === null) return;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    e.preventDefault();
+    pointerNote.set(e.pointerId, m);
+    press(m);
+  });
+  keysEl.addEventListener('pointerover', e => {
+    if (e.pointerType !== 'mouse' || !(e.buttons & 1)) return;
+    const m = midiOf(e.target);
+    if (m === null) return;
+    const prev = pointerNote.get(e.pointerId);
+    if (prev === m) return;
+    if (prev !== undefined) release(prev);
+    pointerNote.set(e.pointerId, m);
+    press(m);
+  });
+  const endPointer = e => {
+    const m = pointerNote.get(e.pointerId);
+    if (m === undefined) return;
+    pointerNote.delete(e.pointerId);
+    release(m);
+  };
+  window.addEventListener('pointerup', endPointer);
+  window.addEventListener('pointercancel', endPointer);
+  keysEl.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Physical keyboard
+  const held = new Set();
+  window.addEventListener('keydown', e => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const ch = e.key.toLowerCase();
+    if (!charToMidi.has(ch)) return;
+    e.preventDefault();
+    if (e.repeat || held.has(ch)) return;        // ignore auto-repeat while held
+    held.add(ch);
+    press(charToMidi.get(ch));
+  });
+  window.addEventListener('keyup', e => {
+    const ch = e.key.toLowerCase();
+    if (!held.has(ch)) return;
+    held.delete(ch);
+    release(charToMidi.get(ch));
+  });
+  window.addEventListener('blur', () => { held.clear(); pointerNote.clear(); releaseAll(); });
+
+  // ---------- Start overlay ----------
+  const startBtn = document.getElementById('start');
+  startBtn.addEventListener('click', async () => {
+    initAudio();
+    try { await ctx.resume(); } catch (_) {}
+    startBtn.hidden = true;
+  });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) releaseAll(); });
+})();
+</script>
+</body>
+</html>
