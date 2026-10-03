@@ -1,295 +1,8663 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Virtual Piano Pro</title>
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1,
+               viewport-fit=cover">
+
+<title>Virtual Piano Pro X</title>
+
 <style>
-:root{--bg:#18191c;--panel:#212226;--panel2:#2a2b30;--text:#e6e7ea;--muted:#8b8d94;--red:#e5252a;--wk:clamp(36px,4.4vw,60px);--bk:calc(var(--wk)*.6);--wh:clamp(170px,26vw,250px);box-sizing:border-box}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0);-webkit-user-select:none;user-select:none}
-.bar{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;padding:0 clamp(12px,3vw,40px)}
-.brand{font-weight:700;font-size:1.05rem;margin-right:6px}
-.brand span{color:var(--red)}
-.grp{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted)}
-.grp input[type=range]{width:88px;accent-color:var(--red)}
-select,button.b{background:var(--panel2);color:var(--text);border:1px solid #3a3b42;border-radius:8px;padding:7px 11px;font:inherit;font-size:.82rem;cursor:pointer}
-button.b:hover,select:hover{border-color:#5a5b63}
-button.b.on{background:var(--red);border-color:var(--red);color:#fff}
-button.b:disabled{opacity:.4;cursor:default}
-#now{font-size:1.4rem;font-weight:600;min-width:4.2ch;font-variant-numeric:tabular-nums;color:var(--muted)}
-#now.on{color:var(--text)}
-#scope{background:#111214;border-radius:8px;width:150px;height:38px}
-#midi{font-size:.75rem;color:var(--muted)}
-.board{background:var(--panel);border-top:4px solid var(--red);padding:22px clamp(6px,1.5vw,20px) 26px;overflow-x:auto;touch-action:pan-x;box-shadow:0 -1px 0 rgba(0,0,0,.4),0 20px 40px rgba(0,0,0,.35)}
-.keys{position:relative;height:var(--wh);margin:0 auto}
-.key{position:absolute;top:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;border:0;padding:0 0 9px;cursor:pointer;touch-action:pan-x;transition:transform .06s ease-out,box-shadow .06s ease-out,background .06s}
-.lbl{min-width:22px;padding:3px 5px;border-radius:6px;font:600 11px/1.2 system-ui,sans-serif;text-align:center;pointer-events:none}
-.lbl:empty{display:none}
-.oct{font:500 10px system-ui;opacity:.55;pointer-events:none}
-.white{height:100%;width:var(--wk);background:linear-gradient(#fbfbfb,#e9e9ec);border-radius:0 0 8px 8px;border-left:1px solid #b9bac0;border-right:1px solid #b9bac0;box-shadow:0 7px 0 #a9aab1,0 10px 12px rgba(0,0,0,.45);z-index:1}
-.white .lbl{background:#d9dae0;color:#3a3b41}
-.white.sus{background:linear-gradient(#f6e3e3,#e7cfd0)}
-.white.active{background:linear-gradient(#e4e4e8,#d3d4da);transform:translateY(4px);box-shadow:0 2px 0 #a9aab1,0 3px 5px rgba(0,0,0,.4)}
-.black{height:62%;width:var(--bk);background:linear-gradient(#34353a,#0d0d0f);border-radius:0 0 6px 6px;box-shadow:0 6px 0 #000,0 9px 10px rgba(0,0,0,.6),inset 0 -3px 3px rgba(255,255,255,.08);z-index:2}
-.black .lbl{background:#4a4b52;color:#f0f0f3}
-.black.sus{background:linear-gradient(#4a2a2c,#1a0c0d)}
-.black.active{background:linear-gradient(#2a2b2f,#08080a);transform:translateY(3px);box-shadow:0 2px 0 #000,0 3px 4px rgba(0,0,0,.6),inset 0 -2px 2px rgba(255,255,255,.05)}
-.hint{color:var(--muted);font-size:.8rem;padding:0 clamp(12px,3vw,40px);margin:0;line-height:1.5}
-kbd{background:var(--panel2);border-radius:4px;padding:1px 6px;font:inherit;color:var(--text)}
-#start{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:rgba(24,25,28,.97);color:var(--text);border:0;cursor:pointer;font:inherit;width:100%}
-#start .big{font-size:clamp(1.6rem,5vw,2.4rem);font-weight:700;padding:16px 36px;border-radius:12px;background:var(--red);color:#fff;box-shadow:0 6px 0 #9d1a1e}
-#start:active .big{transform:translateY(3px);box-shadow:0 3px 0 #9d1a1e}
-#start .sub{color:var(--muted);font-size:.95rem}
-#start[hidden]{display:none}
+
+/* =========================================================
+   VIRTUAL PIANO PRO X
+   PART 1 / 5
+   UI + PIANO FOUNDATION
+========================================================= */
+
+:root {
+
+    --bg: #090a0d;
+    --panel: #111318;
+    --panel2: #181b21;
+    --panel3: #20242c;
+
+    --text: #f5f7fa;
+    --muted: #858b98;
+
+    --accent: #e5252a;
+    --accent-light: #ff565b;
+
+    --green: #31d17b;
+    --yellow: #f4c542;
+
+    --white: #f8f8fa;
+    --white-dark: #d9dbe0;
+
+    --black: #17181c;
+    --black-dark: #050506;
+
+    --border: #30343d;
+
+    --wk: clamp(42px, 4.5vw, 68px);
+    --bk: calc(var(--wk) * .60);
+    --wh: clamp(180px, 27vw, 260px);
+
+    --radius: 12px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    background:
+        radial-gradient(
+            circle at 50% -20%,
+            #292d37 0%,
+            #101217 40%,
+            var(--bg) 75%
+        );
+
+    color: var(--text);
+
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        sans-serif;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+
+/* =========================================================
+   TOP NAVIGATION
+========================================================= */
+
+.topbar {
+
+    min-height: 68px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding:
+        10px
+        clamp(12px, 3vw, 42px);
+
+    background:
+        rgba(10, 11, 14, .92);
+
+    border-bottom:
+        1px solid rgba(255,255,255,.07);
+
+    backdrop-filter:
+        blur(18px);
+
+    z-index: 20;
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.brand {
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    margin-right: 8px;
+
+    font-size: 1.05rem;
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+.logo {
+
+    width: 32px;
+    height: 32px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--accent-light),
+            var(--accent)
+        );
+
+    color: white;
+
+    font-size: 16px;
+
+    box-shadow:
+        0 6px 22px
+        rgba(229,37,42,.32);
+}
+
+.brand span {
+
+    color:
+        var(--accent-light);
+}
+
+
+/* =========================================================
+   CONTROL AREA
+========================================================= */
+
+.controls {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    flex-wrap: wrap;
+
+    flex: 1;
+}
+
+
+/* =========================================================
+   NOTE DISPLAY
+========================================================= */
+
+.note-display {
+
+    min-width: 68px;
+    height: 38px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0 10px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 9px;
+
+    background:
+        #0b0c0f;
+
+    color:
+        var(--muted);
+
+    font-size: 1.05rem;
+    font-weight: 700;
+
+    font-variant-numeric:
+        tabular-nums;
+
+    box-shadow:
+        inset 0 0 18px
+        rgba(0,0,0,.4);
+}
+
+.note-display.on {
+
+    color:
+        white;
+
+    border-color:
+        rgba(229,37,42,.6);
+
+    box-shadow:
+        0 0 20px
+        rgba(229,37,42,.18),
+        inset 0 0 18px
+        rgba(229,37,42,.08);
+}
+
+
+/* =========================================================
+   SELECT / BUTTON
+========================================================= */
+
+select,
+.btn {
+
+    min-height: 36px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            #20242b,
+            #171a20
+        );
+
+    color:
+        var(--text);
+
+    padding:
+        6px 10px;
+
+    font: inherit;
+    font-size: .8rem;
+
+    cursor: pointer;
+
+    transition:
+        .15s ease;
+}
+
+select:hover,
+.btn:hover {
+
+    border-color:
+        #50545e;
+
+    transform:
+        translateY(-1px);
+}
+
+.btn:active {
+
+    transform:
+        translateY(1px);
+}
+
+.btn.active {
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--accent-light),
+            var(--accent)
+        );
+
+    border-color:
+        var(--accent);
+
+    color:
+        white;
+
+    box-shadow:
+        0 5px 18px
+        rgba(229,37,42,.25);
+}
+
+
+/* =========================================================
+   SLIDER CONTROL
+========================================================= */
+
+.control {
+
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    color:
+        var(--muted);
+
+    font-size: .7rem;
+
+    white-space: nowrap;
+}
+
+.control input {
+
+    width: 75px;
+
+    accent-color:
+        var(--accent);
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status {
+
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    margin-left: auto;
+
+    color:
+        var(--muted);
+
+    font-size: .7rem;
+}
+
+.status-dot {
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background:
+        #555b66;
+}
+
+.status-dot.on {
+
+    background:
+        var(--green);
+
+    box-shadow:
+        0 0 10px
+        rgba(49,209,123,.75);
+}
+
+
+/* =========================================================
+   MAIN WORKSPACE
+========================================================= */
+
+.workspace {
+
+    flex: 1;
+
+    min-height: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+/* =========================================================
+   VISUALIZER
+========================================================= */
+
+.visualizer {
+
+    height: 92px;
+
+    margin:
+        10px
+        clamp(12px,3vw,42px)
+        0;
+
+    position: relative;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(255,255,255,.07);
+
+    border-radius:
+        var(--radius);
+
+    background:
+        rgba(8,9,12,.75);
+
+    box-shadow:
+        inset 0 0 30px
+        rgba(0,0,0,.45);
+}
+
+.visualizer canvas {
+
+    width: 100%;
+    height: 100%;
+
+    display: block;
+}
+
+.visualizer-label {
+
+    position: absolute;
+
+    left: 12px;
+    top: 8px;
+
+    color:
+        rgba(255,255,255,.38);
+
+    font-size:
+        .62rem;
+
+    letter-spacing:
+        .1em;
+
+    text-transform:
+        uppercase;
+
+    pointer-events:
+        none;
+}
+
+
+/* =========================================================
+   PIANO WRAPPER
+========================================================= */
+
+.piano-area {
+
+    flex: 1;
+
+    min-height: 0;
+
+    display: flex;
+
+    align-items: center;
+}
+
+
+/* =========================================================
+   PIANO BOARD
+========================================================= */
+
+.board {
+
+    width: 100%;
+
+    padding:
+        20px
+        8px
+        30px;
+
+    background:
+        linear-gradient(
+            #181a20,
+            #0e0f13
+        );
+
+    border-top:
+        4px solid
+        var(--accent);
+
+    border-bottom:
+        1px solid
+        #2a2d35;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    touch-action:
+        pan-x;
+
+    box-shadow:
+        0 -8px 30px
+        rgba(0,0,0,.25),
+
+        0 20px 45px
+        rgba(0,0,0,.42);
+}
+
+
+/* =========================================================
+   KEYS CONTAINER
+========================================================= */
+
+.keys {
+
+    position: relative;
+
+    height:
+        var(--wh);
+
+    margin:
+        0 auto;
+}
+
+
+/* =========================================================
+   BASE KEY
+========================================================= */
+
+.key {
+
+    position: absolute;
+
+    top: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 5px;
+
+    border: 0;
+
+    padding:
+        0 0 10px;
+
+    cursor: pointer;
+
+    touch-action:
+        pan-x;
+
+    transition:
+        transform .055s ease,
+        box-shadow .055s ease,
+        filter .1s ease;
+}
+
+.key:focus {
+
+    outline:
+        2px solid
+        var(--accent);
+
+    outline-offset:
+        2px;
+}
+
+
+/* =========================================================
+   WHITE KEY
+========================================================= */
+
+.white {
+
+    width:
+        var(--wk);
+
+    height:
+        100%;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #f1f1f3 52%,
+            #d9dade 100%
+        );
+
+    border-left:
+        1px solid #aaadb5;
+
+    border-right:
+        1px solid #aaadb5;
+
+    border-radius:
+        0 0 9px 9px;
+
+    z-index:
+        1;
+
+    box-shadow:
+        0 7px 0 #999da5,
+        0 12px 15px
+        rgba(0,0,0,.48);
+}
+
+.white:hover {
+
+    filter:
+        brightness(1.04);
+}
+
+.white.active {
+
+    transform:
+        translateY(5px);
+
+    background:
+        linear-gradient(
+            180deg,
+            #e8e8eb,
+            #cfd1d6
+        );
+
+    box-shadow:
+        0 2px 0 #999da5,
+        0 4px 7px
+        rgba(0,0,0,.42);
+}
+
+
+/* =========================================================
+   BLACK KEY
+========================================================= */
+
+.black {
+
+    width:
+        var(--bk);
+
+    height:
+        62%;
+
+    background:
+        linear-gradient(
+            180deg,
+            #3c3f47,
+            #15161a 45%,
+            #050506
+        );
+
+    border-radius:
+        0 0 7px 7px;
+
+    z-index:
+        5;
+
+    box-shadow:
+        0 6px 0 #000,
+        0 10px 13px
+        rgba(0,0,0,.7),
+        inset 0 -3px 4px
+        rgba(255,255,255,.08);
+}
+
+.black:hover {
+
+    filter:
+        brightness(1.12);
+}
+
+.black.active {
+
+    transform:
+        translateY(4px);
+
+    background:
+        linear-gradient(
+            #2c2e34,
+            #08090b
+        );
+
+    box-shadow:
+        0 2px 0 #000,
+        0 4px 6px
+        rgba(0,0,0,.65);
+}
+
+
+/* =========================================================
+   KEY LABEL
+========================================================= */
+
+.key-label {
+
+    min-width:
+        22px;
+
+    padding:
+        3px 6px;
+
+    border-radius:
+        5px;
+
+    background:
+        rgba(0,0,0,.12);
+
+    color:
+        #303238;
+
+    font-size:
+        10px;
+
+    font-weight:
+        700;
+
+    pointer-events:
+        none;
+}
+
+.black .key-label {
+
+    background:
+        #41444c;
+
+    color:
+        #f5f5f7;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer {
+
+    min-height:
+        42px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        8px 16px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        .7rem;
+
+    background:
+        #0b0c0f;
+
+    border-top:
+        1px solid
+        rgba(255,255,255,.05);
+
+    text-align:
+        center;
+}
+
+
+/* =========================================================
+   START SCREEN
+========================================================= */
+
+#start {
+
+    position:
+        fixed;
+
+    inset:
+        0;
+
+    z-index:
+        100;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        18px;
+
+    border:
+        0;
+
+    color:
+        white;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #292d38,
+            #07080b 70%
+        );
+
+    cursor:
+        pointer;
+}
+
+.start-logo {
+
+    width:
+        86px;
+
+    height:
+        86px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        23px;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--accent-light),
+            var(--accent)
+        );
+
+    font-size:
+        36px;
+
+    box-shadow:
+        0 16px 45px
+        rgba(229,37,42,.3);
+}
+
+.start-title {
+
+    font-size:
+        clamp(1.8rem,5vw,3rem);
+
+    font-weight:
+        800;
+}
+
+.start-title span {
+
+    color:
+        var(--accent-light);
+}
+
+.start-button {
+
+    padding:
+        14px 36px;
+
+    border:
+        0;
+
+    border-radius:
+        12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--accent-light),
+            var(--accent)
+        );
+
+    color:
+        white;
+
+    font-weight:
+        700;
+
+    box-shadow:
+        0 7px 0 #94171b,
+        0 15px 35px
+        rgba(229,37,42,.25);
+}
+
+.start-sub {
+
+    color:
+        var(--muted);
+
+    font-size:
+        .82rem;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .topbar {
+
+        flex-wrap:
+            wrap;
+
+        min-height:
+            auto;
+
+        padding:
+            8px 12px;
+    }
+
+    .brand {
+
+        width:
+            100%;
+    }
+
+    .status {
+
+        display:
+            none;
+    }
+
+    .visualizer {
+
+        height:
+            65px;
+
+        margin-top:
+            6px;
+    }
+
+    .board {
+
+        padding-top:
+            14px;
+    }
+
+}
+
+
+@media (max-width: 520px) {
+
+    .controls {
+
+        gap:
+            5px;
+    }
+
+    .control {
+
+        font-size:
+            .62rem;
+    }
+
+    .control input {
+
+        width:
+            58px;
+    }
+
+    .note-display {
+
+        min-width:
+            52px;
+
+        height:
+            34px;
+
+        font-size:
+            .9rem;
+    }
+
+    .footer {
+
+        font-size:
+            .62rem;
+    }
+
+}
+
 </style>
+
 </head>
+
+
 <body>
-<button id="start" type="button"><span class="big">Click to Start</span><span class="sub">Turn up your volume. Play with mouse, touch, keyboard or a MIDI device.</span></button>
 
-<div class="bar">
-  <div class="brand">Virtual Piano <span>Pro</span></div>
-  <div id="now">&nbsp;</div>
-  <select id="pre" aria-label="Sound"><option value="grand">Grand piano</option><option value="epiano">Electric piano</option><option value="organ">Organ</option><option value="synth">Synth</option></select>
-  <label class="grp">Volume <input id="vol" type="range" min="0" max="1" step=".01" value=".8"></label>
-  <label class="grp">Reverb <input id="rev" type="range" min="0" max="1" step=".01" value=".25"></label>
-  <label class="grp">Attack <input id="atk" type="range" min=".005" max=".5" step=".005" value=".012"></label>
-  <label class="grp">Release <input id="rel" type="range" min=".05" max="2.5" step=".05" value=".45"></label>
-  <div class="grp"><button class="b" id="od">Oct −</button><span id="ov">0</span><button class="b" id="ou">Oct +</button></div>
-  <button class="b" id="sus">Sustain</button>
-  <button class="b" id="lab">Labels: keys</button>
-  <button class="b" id="rec">● Rec</button>
-  <button class="b" id="play" disabled>▶ Play</button>
-  <canvas id="scope" width="300" height="76"></canvas>
-  <span id="midi">MIDI: off</span>
-</div>
 
-<main class="board"><div class="keys" id="keys"></div></main>
+<!-- =======================================================
+     START SCREEN
+======================================================= -->
 
-<p class="hint">Keys: <kbd>←</kbd> <kbd>→</kbd> shift octave, <kbd>Space</kbd> sustain pedal. Click lower on a key to play it louder. Connect a MIDI keyboard for velocity and pedal support.</p>
+<button id="start">
+
+    <div class="start-logo">
+        🎹
+    </div>
+
+    <div class="start-title">
+        Virtual Piano
+        <span>Pro X</span>
+    </div>
+
+    <div class="start-sub">
+        Professional Browser Piano
+    </div>
+
+    <div class="start-button">
+        Start Playing
+    </div>
+
+</button>
+
+
+<!-- =======================================================
+     TOP BAR
+======================================================= -->
+
+<header class="topbar">
+
+
+    <div class="brand">
+
+        <div class="logo">
+            ♪
+        </div>
+
+        Virtual Piano
+        <span>Pro X</span>
+
+    </div>
+
+
+    <div class="controls">
+
+
+        <div
+            class="note-display"
+            id="now">
+
+            —
+
+        </div>
+
+
+        <select id="instrument">
+
+            <option value="grand">
+                Grand Piano
+            </option>
+
+            <option value="epiano">
+                Electric Piano
+            </option>
+
+            <option value="organ">
+                Organ
+            </option>
+
+            <option value="synth">
+                Synth
+            </option>
+
+        </select>
+
+
+        <label class="control">
+
+            VOL
+
+            <input
+                id="volume"
+                type="range"
+                min="0"
+                max="1"
+                step=".01"
+                value=".8">
+
+        </label>
+
+
+        <label class="control">
+
+            REV
+
+            <input
+                id="reverb"
+                type="range"
+                min="0"
+                max="1"
+                step=".01"
+                value=".25">
+
+        </label>
+
+
+        <button
+            class="btn"
+            id="octDown">
+
+            Oct −
+
+        </button>
+
+
+        <span id="octave">
+            0
+        </span>
+
+
+        <button
+            class="btn"
+            id="octUp">
+
+            Oct +
+
+        </button>
+
+
+        <button
+            class="btn"
+            id="sustain">
+
+            Sustain
+
+        </button>
+
+
+        <button
+            class="btn"
+            id="record">
+
+            ● Rec
+
+        </button>
+
+
+        <button
+            class="btn"
+            id="play"
+            disabled>
+
+            ▶ Play
+
+        </button>
+
+
+    </div>
+
+
+    <div class="status">
+
+        <span
+            class="status-dot"
+            id="audioStatus">
+        </span>
+
+        <span id="statusText">
+            Ready
+        </span>
+
+    </div>
+
+</header>
+
+
+<!-- =======================================================
+     WORKSPACE
+======================================================= -->
+
+<main class="workspace">
+
+
+    <!-- AUDIO VISUALIZER -->
+
+    <section class="visualizer">
+
+        <span class="visualizer-label">
+            Audio Visualizer
+        </span>
+
+        <canvas
+            id="scope"
+            width="900"
+            height="160">
+        </canvas>
+
+    </section>
+
+
+    <!-- PIANO -->
+
+    <section class="piano-area">
+
+        <main class="board">
+
+            <div
+                class="keys"
+                id="keys">
+            </div>
+
+        </main>
+
+    </section>
+
+
+</main>
+
+
+<!-- =======================================================
+     FOOTER
+======================================================= -->
+
+<footer class="footer">
+
+    ← → Change Octave
+    &nbsp; • &nbsp;
+    Space = Sustain
+    &nbsp; • &nbsp;
+    Keyboard = Play
+    &nbsp; • &nbsp;
+    MIDI Keyboard Supported
+
+</footer>
+
 
 <script>
+
 (() => {
-'use strict';
-const $ = id => document.getElementById(id);
-const START = 36, END = 96;                       // C2 .. C7
-const CHARS = 'zsxdcvgbhnjm' + 'q2w3er5t6y7u' + 'i9o0p[=]';
-const NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const isBlack = m => [1,3,6,8,10].includes(m % 12);
-const noteName = m => NAMES[m % 12] + (Math.floor(m / 12) - 1);
 
-// ---------- Build keys ----------
-const keysEl = $('keys'), nowEl = $('now'), els = new Map();
-let wc = 0;
-for (let m = START; m <= END; m++) {
-  const k = document.createElement('button');
-  k.type = 'button'; k.tabIndex = -1; k.dataset.midi = m;
-  k.className = 'key ' + (isBlack(m) ? 'black' : 'white');
-  k.setAttribute('aria-label', noteName(m));
-  if (isBlack(m)) k.style.left = `calc(var(--wk)*${wc} - var(--bk)/2)`;
-  else { k.style.left = `calc(var(--wk)*${wc})`; wc++; }
-  const l = document.createElement('span'); l.className = 'lbl'; k.appendChild(l);
-  if (m % 12 === 0) { const o = document.createElement('span'); o.className = 'oct'; o.textContent = noteName(m); k.appendChild(o); }
-  keysEl.appendChild(k); els.set(m, k);
+"use strict";
+
+
+/* =========================================================
+   BASIC HELPERS
+========================================================= */
+
+const $ = id =>
+    document.getElementById(id);
+
+
+/* =========================================================
+   PIANO CONFIGURATION
+========================================================= */
+
+const START = 36;
+const END = 96;
+
+const CHARS =
+    'zsxdcvgbhnjm' +
+    'q2w3er5t6y7u' +
+    'i9o0p[=]';
+
+const NAMES = [
+
+    'C',
+    'C#',
+    'D',
+    'D#',
+    'E',
+    'F',
+    'F#',
+    'G',
+    'G#',
+    'A',
+    'A#',
+    'B'
+
+];
+
+
+const isBlack = midi =>
+    [1,3,6,8,10]
+        .includes(midi % 12);
+
+
+const noteName = midi =>
+    NAMES[midi % 12] +
+    (Math.floor(midi / 12) - 1);
+
+
+/* =========================================================
+   PIANO ELEMENT STORAGE
+========================================================= */
+
+const keysEl =
+    $('keys');
+
+const nowEl =
+    $('now');
+
+const keyElements =
+    new Map();
+
+
+/* =========================================================
+   CREATE PIANO KEYS
+========================================================= */
+
+let whiteCount = 0;
+
+
+for (
+    let midi = START;
+    midi <= END;
+    midi++
+) {
+
+    const key =
+        document.createElement('button');
+
+
+    key.type =
+        'button';
+
+
+    key.className =
+        'key ' +
+        (
+            isBlack(midi)
+                ? 'black'
+                : 'white'
+        );
+
+
+    key.dataset.midi =
+        midi;
+
+
+    key.setAttribute(
+        'aria-label',
+        noteName(midi)
+    );
+
+
+    if (
+        isBlack(midi)
+    ) {
+
+        key.style.left =
+            `calc(
+                var(--wk) * ${whiteCount}
+                - var(--bk) / 2
+            )`;
+
+    }
+
+    else {
+
+        key.style.left =
+            `calc(
+                var(--wk) * ${whiteCount}
+            )`;
+
+        whiteCount++;
+
+    }
+
+
+    const label =
+        document.createElement(
+            'span'
+        );
+
+
+    label.className =
+        'key-label';
+
+
+    key.appendChild(
+        label
+    );
+
+
+    keysEl.appendChild(
+        key
+    );
+
+
+    keyElements.set(
+        midi,
+        key
+    );
+
 }
-keysEl.style.width = `calc(var(--wk)*${wc})`;
 
-// ---------- Computer-keyboard mapping with octave shift ----------
-let shift = 0, labelMode = 'keys';
-const charMap = new Map();
-function remap() {
-  charMap.clear();
-  const base = 48 + shift * 12;
-  [...CHARS].forEach((c, i) => { if (base + i >= START && base + i <= END) charMap.set(c, base + i); });
-  els.forEach((k, m) => {
-    const i = m - base, c = i >= 0 && i < CHARS.length ? CHARS[i].toUpperCase() : '';
-    k.firstChild.textContent = labelMode === 'keys' ? c : (isBlack(m) ? '' : NAMES[m % 12]);
-  });
-  $('ov').textContent = (shift > 0 ? '+' : '') + shift;
+
+keysEl.style.width =
+    `calc(
+        var(--wk) * ${whiteCount}
+    )`;
+
+
+/* =========================================================
+   KEYBOARD MAPPING
+========================================================= */
+
+let octaveShift = 0;
+
+const charMap =
+    new Map();
+
+
+function updateKeyboardMap() {
+
+    charMap.clear();
+
+
+    const base =
+        48 +
+        octaveShift * 12;
+
+
+    [...CHARS].forEach(
+        (char, index) => {
+
+            const midi =
+                base + index;
+
+
+            if (
+                midi >= START &&
+                midi <= END
+            ) {
+
+                charMap.set(
+                    char,
+                    midi
+                );
+
+            }
+
+        }
+    );
+
+
+    keyElements.forEach(
+        (key, midi) => {
+
+            const index =
+                midi - base;
+
+
+            const char =
+                index >= 0 &&
+                index < CHARS.length
+                    ? CHARS[index]
+                    : '';
+
+
+            key.querySelector(
+                '.key-label'
+            ).textContent =
+                char.toUpperCase();
+
+        }
+    );
+
+
+    $('octave').textContent =
+        octaveShift > 0
+            ? '+' + octaveShift
+            : octaveShift;
+
 }
-$('od').onclick = () => { if (shift > -1) { shift--; remap(); } };
-$('ou').onclick = () => { if (shift < 2) { shift++; remap(); } };
-$('lab').onclick = e => { labelMode = labelMode === 'keys' ? 'notes' : 'keys'; e.target.textContent = 'Labels: ' + labelMode; remap(); };
-remap();
 
-// ---------- Audio engine ----------
-let ctx, master, dry, wet, analyser;
-const PRE = {
-  grand: { parts: [['triangle',1,1,0],['triangle',1,.5,4],['sine',2,.32,0],['sine',3,.12,0],['sine',.5,.18,0]], decay: .9, sus: .28, b0: 9, b1: 3 },
-  epiano:{ parts: [['sine',1,1,0],['sine',2,.35,0],['sine',7,.07,0],['triangle',1,.25,3]], decay: .7, sus: .35, b0: 5, b1: 2.5 },
-  organ: { parts: [['sine',1,.9,0],['sine',2,.6,0],['sine',3,.4,0],['sine',4,.3,0],['sine',.5,.5,0]], decay: .05, sus: 1, b0: 6, b1: 6 },
-  synth: { parts: [['sawtooth',1,.5,-7],['sawtooth',1,.5,7],['square',.5,.25,0]], decay: .4, sus: .6, b0: 6, b1: 2.5 }
-};
+
+updateKeyboardMap();
+
+
+/* =========================================================
+   OCTAVE BUTTONS
+========================================================= */
+
+$('octDown').onclick =
+    () => {
+
+        if (
+            octaveShift > -1
+        ) {
+
+            octaveShift--;
+
+            updateKeyboardMap();
+
+        }
+
+    };
+
+
+$('octUp').onclick =
+    () => {
+
+        if (
+            octaveShift < 2
+        ) {
+
+            octaveShift++;
+
+            updateKeyboardMap();
+
+        }
+
+    };
+
+
+/* =========================================================
+   AUDIO STATE
+========================================================= */
+
+let audioContext = null;
+
+let master = null;
+
+let analyser = null;
+
+let started = false;
+
+
+/* =========================================================
+   AUDIO INITIALIZATION
+========================================================= */
+
 function initAudio() {
-  if (ctx) return;
-  ctx = new (window.AudioContext || window.webkitAudioContext)();
-  const len = ctx.sampleRate * 2.2, ir = ctx.createBuffer(2, len, ctx.sampleRate);
-  for (let c = 0; c < 2; c++) { const d = ir.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
-  const conv = ctx.createConvolver(); conv.buffer = ir;
-  dry = ctx.createGain(); wet = ctx.createGain();
-  master = ctx.createGain();
-  const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4;
-  analyser = ctx.createAnalyser(); analyser.fftSize = 512;
-  conv.connect(wet); dry.connect(master); wet.connect(master);
-  master.connect(comp); comp.connect(analyser); analyser.connect(ctx.destination);
-  ctx.bus = ctx.createGain(); ctx.bus.connect(dry); ctx.bus.connect(conv);
-  applyMix(); draw();
-}
-function applyMix() {
-  if (!ctx) return;
-  const t = ctx.currentTime, r = +$('rev').value;
-  master.gain.setTargetAtTime(+$('vol').value, t, .02);
-  dry.gain.setTargetAtTime(1 - r * .4, t, .02);
-  wet.gain.setTargetAtTime(r * .9, t, .02);
-}
-['vol','rev'].forEach(i => $(i).addEventListener('input', applyMix));
 
-const voices = new Map();
-function noteOn(m, v) {
-  const P = PRE[$('pre').value], t = ctx.currentTime, f = 440 * Math.pow(2, (m - 69) / 12);
-  const A = +$('atk').value, peak = .06 + .3 * v;
-  const amp = ctx.createGain();
-  amp.gain.setValueAtTime(.0001, t);
-  amp.gain.linearRampToValueAtTime(peak, t + A);                         // Attack
-  amp.gain.setTargetAtTime(peak * P.sus, t + A, P.decay / 3);            // Decay -> Sustain
-  const fl = ctx.createBiquadFilter(); fl.type = 'lowpass'; fl.Q.value = .5;
-  fl.frequency.setValueAtTime(Math.min(f * P.b0 * (.6 + v * .6), 12000), t);
-  fl.frequency.setTargetAtTime(Math.min(f * P.b1, 6000), t + .01, .5);
-  const oscs = P.parts.map(([type, mult, g, det]) => {
-    const o = ctx.createOscillator(), gn = ctx.createGain();
-    o.type = type; o.frequency.value = f * mult; o.detune.value = det; gn.gain.value = g / 2.2;
-    o.connect(gn); gn.connect(fl); o.start(t); return o;
-  });
-  fl.connect(amp); amp.connect(ctx.bus);
-  voices.set(m, { amp, oscs, fl });
-}
-function noteOff(m, R) {
-  const v = voices.get(m); if (!v) return; voices.delete(m);
-  R = R ?? +$('rel').value;
-  const t = ctx.currentTime, g = v.amp.gain;
-  if (g.cancelAndHoldAtTime) g.cancelAndHoldAtTime(t); else { const c = g.value; g.cancelScheduledValues(t); g.setValueAtTime(c, t); }
-  g.setTargetAtTime(0, t, R / 4);                                        // Release
-  v.oscs.forEach(o => o.stop(t + R + .15));
-  v.oscs[0].onended = () => { v.amp.disconnect(); v.fl.disconnect(); };
+    if (
+        audioContext
+    ) {
+
+        return;
+
+    }
+
+
+    audioContext =
+        new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+
+
+    master =
+        audioContext.createGain();
+
+
+    analyser =
+        audioContext.createAnalyser();
+
+
+    analyser.fftSize =
+        512;
+
+
+    master.connect(
+        analyser
+    );
+
+
+    analyser.connect(
+        audioContext.destination
+    );
+
 }
 
-// ---------- Press / release with sustain pedal ----------
-const down = new Set(), sustained = new Set();
-let pedal = false, recording = false, events = [], t0 = 0, timers = [];
-function press(m, v = .75, fromPlayback) {
-  if (!ctx || m < START || m > END || down.has(m)) return;
-  down.add(m);
-  if (voices.has(m)) noteOff(m, .06);                                    // re-strike a sustained note
-  sustained.delete(m);
-  noteOn(m, v);
-  const k = els.get(m); k.classList.remove('sus'); k.classList.add('active');
-  nowEl.textContent = noteName(m); nowEl.classList.add('on');
-  if (recording && !fromPlayback) events.push({ t: performance.now() - t0, m, v, on: 1 });
-}
-function release(m, fromPlayback) {
-  if (!down.has(m)) return;
-  down.delete(m);
-  const k = els.get(m); k.classList.remove('active');
-  if (pedal) { sustained.add(m); k.classList.add('sus'); } else noteOff(m);
-  if (!down.size) nowEl.classList.remove('on');
-  if (recording && !fromPlayback) events.push({ t: performance.now() - t0, m, on: 0 });
-}
-function setPedal(on) {
-  if (!ctx || pedal === on) return;
-  pedal = on; $('sus').classList.toggle('on', on);
-  if (!on) { sustained.forEach(m => { noteOff(m); els.get(m).classList.remove('sus'); }); sustained.clear(); }
-}
-function releaseAll() { setPedal(false); [...down].forEach(m => release(m)); [...voices.keys()].forEach(m => noteOff(m)); }
 
-// ---------- Pointer input (velocity from where you press the key) ----------
-const ptr = new Map();
-const midiOf = el => { const k = el && el.closest && el.closest('.key'); return k ? +k.dataset.midi : null; };
-const velAt = (e, k) => { const r = k.getBoundingClientRect(); return Math.min(1, Math.max(.25, .3 + .7 * ((e.clientY - r.top) / r.height))); };
-keysEl.addEventListener('pointerdown', e => {
-  const m = midiOf(e.target); if (m === null || (e.pointerType === 'mouse' && e.button !== 0)) return;
-  e.preventDefault(); ptr.set(e.pointerId, m); press(m, velAt(e, els.get(m)));
-});
-keysEl.addEventListener('pointerover', e => {
-  if (e.pointerType !== 'mouse' || !(e.buttons & 1)) return;
-  const m = midiOf(e.target); if (m === null) return;
-  const p = ptr.get(e.pointerId); if (p === m) return;
-  if (p !== undefined) release(p);
-  ptr.set(e.pointerId, m); press(m, velAt(e, els.get(m)));
-});
-const endPtr = e => { const m = ptr.get(e.pointerId); if (m === undefined) return; ptr.delete(e.pointerId); release(m); };
-addEventListener('pointerup', endPtr); addEventListener('pointercancel', endPtr);
-keysEl.addEventListener('contextmenu', e => e.preventDefault());
+/* =========================================================
+   START APPLICATION
+========================================================= */
 
-// ---------- Physical keyboard ----------
-const held = new Map();   // char -> midi (locked at keydown so octave shifts never strand a note)
-addEventListener('keydown', e => {
-  if (e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|SELECT)$/.test(e.target.tagName) && e.key.length === 1 && e.key !== ' ') return;
-  if (e.key === ' ') { if (e.target.tagName === 'BUTTON') return; e.preventDefault(); setPedal(true); return; }
-  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { if (e.target.tagName === 'INPUT') return; e.preventDefault(); if (!e.repeat) (e.key === 'ArrowLeft' ? $('od') : $('ou')).click(); return; }
-  const c = e.key.toLowerCase();
-  if (!charMap.has(c)) return;
-  e.preventDefault();
-  if (e.repeat || held.has(c)) return;                                  // no duplicate triggers
-  held.set(c, charMap.get(c)); press(held.get(c));
-});
-addEventListener('keyup', e => {
-  if (e.key === ' ') { setPedal(false); return; }
-  const c = e.key.toLowerCase();
-  if (held.has(c)) { release(held.get(c)); held.delete(c); }
-});
-addEventListener('blur', () => { held.clear(); ptr.clear(); releaseAll(); });
+$('start')
+    .addEventListener(
+        'click',
+        async () => {
 
-// Sustain button
-$('sus').addEventListener('pointerdown', e => { e.preventDefault(); setPedal(true); });
-$('sus').addEventListener('pointerup', () => setPedal(false));
-$('sus').addEventListener('pointerleave', () => setPedal(false));
+            initAudio();
 
-// ---------- Record / playback ----------
-$('rec').onclick = () => {
-  if (!ctx) return;
-  recording = !recording; $('rec').classList.toggle('on', recording);
-  $('rec').textContent = recording ? '■ Stop' : '● Rec';
-  if (recording) { events = []; t0 = performance.now(); }
-  $('play').disabled = recording || !events.length;
+
+            try {
+
+                await audioContext.resume();
+
+            }
+
+            catch (_) {}
+
+
+            started = true;
+
+
+            $('start').style.display =
+                'none';
+
+
+            $('audioStatus')
+                .classList.add('on');
+
+
+            $('statusText')
+                .textContent =
+                'Audio Ready';
+
+        }
+    );
+
+
+/* =========================================================
+   PART 2 / 5
+   ADVANCED AUDIO ENGINE
+========================================================= */
+
+
+/* =========================================================
+   INSTRUMENT PRESETS
+========================================================= */
+
+const INSTRUMENTS = {
+
+    grand: {
+
+        name: 'Grand Piano',
+
+        parts: [
+
+            {
+                type: 'triangle',
+                multiplier: 1,
+                gain: 1.00,
+                detune: 0
+            },
+
+            {
+                type: 'triangle',
+                multiplier: 1,
+                gain: 0.48,
+                detune: 4
+            },
+
+            {
+                type: 'sine',
+                multiplier: 2,
+                gain: 0.30,
+                detune: 0
+            },
+
+            {
+                type: 'sine',
+                multiplier: 3,
+                gain: 0.12,
+                detune: 0
+            },
+
+            {
+                type: 'sine',
+                multiplier: 0.5,
+                gain: 0.16,
+                detune: 0
+            }
+
+        ],
+
+        decay: 0.90,
+        sustain: 0.28,
+
+        filterStart: 9,
+        filterEnd: 3,
+
+        release: 0.45
+
+    },
+
+
+    epiano: {
+
+        name: 'Electric Piano',
+
+        parts: [
+
+            {
+                type: 'sine',
+                multiplier: 1,
+                gain: 1.00,
+                detune: 0
+            },
+
+            {
+                type: 'sine',
+                multiplier: 2,
+                gain: 0.35,
+                detune: 0
+            },
+
+            {
+                type: 'sine',
+                multiplier: 7,
+                gain: 0.07,
+                detune: 0
+            },
+
+            {
+                type: 'triangle',
+                multiplier: 1,
+                gain: 0.25,
+                detune: 3
+            }
+
+        ],
+
+        decay: 0.70,
+        sustain: 0.35,
+
+        filterStart: 5,
+        filterEnd: 2.5,
+
+        release: 0.55
+
+    },
+
+
+    organ: {
+
+        name: 'Organ',
+
+        parts: [
+
+            {
+                type: 'sine',
+                multiplier: 1,
+                gain: 0.90,
+                detune: 0
+            },
+
+            {
+                type: 'sine',
+                multiplier: 2,
+                gain: 0.60,
+                detune: 0
+            },
+
+            {
+                type: 'sine',
+                multiplier: 3,
+                gain: 0.40,
+                detune: 0
+            },
+
+            {
+                type: 'sine',
+                multiplier: 4,
+                gain: 0.30,
+                detune: 0
+            },
+
+            {
+                type: 'sine',
+                multiplier: 0.5,
+                gain: 0.50,
+                detune: 0
+            }
+
+        ],
+
+        decay: 0.05,
+        sustain: 1,
+
+        filterStart: 6,
+        filterEnd: 6,
+
+        release: 0.65
+
+    },
+
+
+    synth: {
+
+        name: 'Synth',
+
+        parts: [
+
+            {
+                type: 'sawtooth',
+                multiplier: 1,
+                gain: 0.50,
+                detune: -7
+            },
+
+            {
+                type: 'sawtooth',
+                multiplier: 1,
+                gain: 0.50,
+                detune: 7
+            },
+
+            {
+                type: 'square',
+                multiplier: 0.5,
+                gain: 0.25,
+                detune: 0
+            }
+
+        ],
+
+        decay: 0.40,
+        sustain: 0.60,
+
+        filterStart: 6,
+        filterEnd: 2.5,
+
+        release: 0.75
+
+    }
+
 };
-$('play').onclick = () => {
-  if (timers.length) { timers.forEach(clearTimeout); timers = []; [...down].forEach(m => release(m, true)); $('play').textContent = '▶ Play'; return; }
-  $('play').textContent = '■ Stop';
-  events.forEach(ev => timers.push(setTimeout(() => ev.on ? press(ev.m, ev.v, true) : release(ev.m, true), ev.t)));
-  const end = events.length ? events[events.length - 1].t + 600 : 0;
-  timers.push(setTimeout(() => { timers = []; $('play').textContent = '▶ Play'; }, end));
-};
 
-// ---------- Web MIDI ----------
-if (navigator.requestMIDIAccess) navigator.requestMIDIAccess().then(a => {
-  const hook = () => { let n = 0; a.inputs.forEach(i => { n++; i.onmidimessage = ({ data: [s, d1, d2] }) => {
-    const c = s & 240;
-    if (c === 144 && d2 > 0) press(d1, d2 / 127);
-    else if (c === 128 || c === 144) release(d1);
-    else if (c === 176 && d1 === 64) setPedal(d2 >= 64);
-  }; }); $('midi').textContent = n ? `MIDI: ${n} device${n > 1 ? 's' : ''}` : 'MIDI: none'; };
-  a.onstatechange = hook; hook();
-}).catch(() => {});
 
-// ---------- Oscilloscope ----------
-const cv = $('scope'), cc = cv.getContext('2d'), buf = new Uint8Array(512);
-function draw() {
-  requestAnimationFrame(draw);
-  analyser.getByteTimeDomainData(buf);
-  cc.clearRect(0, 0, cv.width, cv.height);
-  cc.strokeStyle = '#e5252a'; cc.lineWidth = 2; cc.beginPath();
-  for (let i = 0; i < buf.length; i++) { const x = i / buf.length * cv.width, y = buf[i] / 255 * cv.height; i ? cc.lineTo(x, y) : cc.moveTo(x, y); }
-  cc.stroke();
+/* =========================================================
+   MASTER AUDIO SETTINGS
+========================================================= */
+
+let masterGain = null;
+
+let dryGain = null;
+
+let wetGain = null;
+
+let compressor = null;
+
+let convolver = null;
+
+
+/* =========================================================
+   REVERB IMPULSE
+========================================================= */
+
+function createImpulseResponse(
+    context,
+    duration = 2.2,
+    decay = 2.6
+) {
+
+    const length =
+        context.sampleRate *
+        duration;
+
+
+    const impulse =
+        context.createBuffer(
+            2,
+            length,
+            context.sampleRate
+        );
+
+
+    for (
+        let channel = 0;
+        channel < 2;
+        channel++
+    ) {
+
+        const data =
+            impulse.getChannelData(
+                channel
+            );
+
+
+        for (
+            let i = 0;
+            i < length;
+            i++
+        ) {
+
+            const progress =
+                i / length;
+
+
+            const envelope =
+                Math.pow(
+                    1 - progress,
+                    decay
+                );
+
+
+            data[i] =
+                (
+                    Math.random() * 2 - 1
+                ) *
+                envelope;
+
+        }
+
+    }
+
+
+    return impulse;
+
 }
 
-// ---------- Start ----------
-$('start').addEventListener('click', async () => {
-  initAudio(); try { await ctx.resume(); } catch (_) {}
-  $('start').hidden = true;
-  const b = document.querySelector('.board'); b.scrollLeft = (b.scrollWidth - b.clientWidth) / 2;
-});
+
+/* =========================================================
+   INITIALIZE MASTER AUDIO CHAIN
+========================================================= */
+
+function setupAudioGraph() {
+
+    if (
+        !audioContext
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        masterGain
+    ) {
+
+        return;
+
+    }
+
+
+    masterGain =
+        audioContext.createGain();
+
+
+    dryGain =
+        audioContext.createGain();
+
+
+    wetGain =
+        audioContext.createGain();
+
+
+    compressor =
+        audioContext
+            .createDynamicsCompressor();
+
+
+    convolver =
+        audioContext
+            .createConvolver();
+
+
+    convolver.buffer =
+        createImpulseResponse(
+            audioContext,
+            2.4,
+            2.7
+        );
+
+
+    compressor.threshold.value =
+        -14;
+
+
+    compressor.knee.value =
+        18;
+
+
+    compressor.ratio.value =
+        4;
+
+
+    compressor.attack.value =
+        0.005;
+
+
+    compressor.release.value =
+        0.20;
+
+
+    dryGain.gain.value =
+        0.85;
+
+
+    wetGain.gain.value =
+        0.20;
+
+
+    masterGain.gain.value =
+        0.8;
+
+
+    dryGain.connect(
+        masterGain
+    );
+
+
+    wetGain.connect(
+        masterGain
+    );
+
+
+    masterGain.connect(
+        compressor
+    );
+
+
+    compressor.connect(
+        analyser
+    );
+
+
+    analyser.connect(
+        audioContext.destination
+    );
+
+}
+
+
+/* =========================================================
+   UPDATE MIX
+========================================================= */
+
+function updateMix() {
+
+    if (
+        !audioContext ||
+        !masterGain
+    ) {
+
+        return;
+
+    }
+
+
+    const time =
+        audioContext.currentTime;
+
+
+    const volume =
+        Number(
+            $('volume').value
+        );
+
+
+    const reverb =
+        Number(
+            $('reverb').value
+        );
+
+
+    masterGain.gain
+        .setTargetAtTime(
+            volume,
+            time,
+            0.02
+        );
+
+
+    dryGain.gain
+        .setTargetAtTime(
+            1 - reverb * 0.45,
+            time,
+            0.02
+        );
+
+
+    wetGain.gain
+        .setTargetAtTime(
+            reverb * 0.85,
+            time,
+            0.02
+        );
+
+}
+
+
+/* =========================================================
+   VOLUME / REVERB EVENTS
+========================================================= */
+
+$('volume')
+    .addEventListener(
+        'input',
+        updateMix
+    );
+
+
+$('reverb')
+    .addEventListener(
+        'input',
+        updateMix
+    );
+
+
+/* =========================================================
+   VOICE STORAGE
+========================================================= */
+
+const voices =
+    new Map();
+
+
+/* =========================================================
+   MIDI FREQUENCY
+========================================================= */
+
+function midiToFrequency(
+    midi
+) {
+
+    return 440 *
+        Math.pow(
+            2,
+            (midi - 69) / 12
+        );
+
+}
+
+
+/* =========================================================
+   CLAMP VALUE
+========================================================= */
+
+function clamp(
+    value,
+    min,
+    max
+) {
+
+    return Math.min(
+        max,
+        Math.max(
+            min,
+            value
+        )
+    );
+
+}
+
+
+/* =========================================================
+   CREATE VOICE
+========================================================= */
+
+function createVoice(
+    midi,
+    velocity = 0.75
+) {
+
+    if (
+        !audioContext ||
+        !masterGain
+    ) {
+
+        return null;
+
+    }
+
+
+    const preset =
+        INSTRUMENTS[
+            $('instrument').value
+        ];
+
+
+    const frequency =
+        midiToFrequency(
+            midi
+        );
+
+
+    const time =
+        audioContext.currentTime;
+
+
+    const attack =
+        Number(
+            $('attack')?.value ||
+            0.012
+        );
+
+
+    const peak =
+        0.05 +
+        0.32 *
+        clamp(
+            velocity,
+            0.05,
+            1
+        );
+
+
+    const amp =
+        audioContext.createGain();
+
+
+    amp.gain.setValueAtTime(
+        0.0001,
+        time
+    );
+
+
+    amp.gain.linearRampToValueAtTime(
+        peak,
+        time + attack
+    );
+
+
+    amp.gain.setTargetAtTime(
+        peak * preset.sustain,
+        time + attack,
+        preset.decay / 3
+    );
+
+
+    /* -----------------------------------------------------
+       FILTER
+    ----------------------------------------------------- */
+
+    const filter =
+        audioContext
+            .createBiquadFilter();
+
+
+    filter.type =
+        'lowpass';
+
+
+    filter.Q.value =
+        0.5;
+
+
+    const startFrequency =
+        Math.min(
+            frequency *
+            preset.filterStart *
+            (
+                0.6 +
+                velocity * 0.6
+            ),
+            12000
+        );
+
+
+    const endFrequency =
+        Math.min(
+            frequency *
+            preset.filterEnd,
+            6000
+        );
+
+
+    filter.frequency.setValueAtTime(
+        startFrequency,
+        time
+    );
+
+
+    filter.frequency.setTargetAtTime(
+        endFrequency,
+        time + 0.01,
+        0.5
+    );
+
+
+    /* -----------------------------------------------------
+       OSCILLATORS
+    ----------------------------------------------------- */
+
+    const oscillators = [];
+
+
+    preset.parts.forEach(
+        part => {
+
+            const oscillator =
+                audioContext
+                    .createOscillator();
+
+
+            const gain =
+                audioContext
+                    .createGain();
+
+
+            oscillator.type =
+                part.type;
+
+
+            oscillator.frequency.value =
+                frequency *
+                part.multiplier;
+
+
+            oscillator.detune.value =
+                part.detune;
+
+
+            gain.gain.value =
+                part.gain /
+                2.2;
+
+
+            oscillator.connect(
+                gain
+            );
+
+
+            gain.connect(
+                filter
+            );
+
+
+            oscillator.start(
+                time
+            );
+
+
+            oscillators.push(
+                oscillator
+            );
+
+        }
+    );
+
+
+    /* -----------------------------------------------------
+       CONNECT VOICE
+    ----------------------------------------------------- */
+
+    filter.connect(
+        amp
+    );
+
+
+    amp.connect(
+        dryGain
+    );
+
+
+    amp.connect(
+        convolver
+    );
+
+
+    return {
+
+        midi,
+
+        velocity,
+
+        amp,
+
+        filter,
+
+        oscillators,
+
+        preset,
+
+        startTime: time
+
+    };
+
+}
+
+
+/* =========================================================
+   NOTE ON
+========================================================= */
+
+function noteOn(
+    midi,
+    velocity = 0.75
+) {
+
+    if (
+        !audioContext
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        midi < START ||
+        midi > END
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        voices.has(midi)
+    ) {
+
+        noteOff(
+            midi,
+            0.06
+        );
+
+    }
+
+
+    const voice =
+        createVoice(
+            midi,
+            velocity
+        );
+
+
+    if (!voice) {
+
+        return;
+
+    }
+
+
+    voices.set(
+        midi,
+        voice
+    );
+
+}
+
+
+/* =========================================================
+   NOTE OFF
+========================================================= */
+
+function noteOff(
+    midi,
+    releaseTime
+) {
+
+    const voice =
+        voices.get(
+            midi
+        );
+
+
+    if (
+        !voice
+    ) {
+
+        return;
+
+    }
+
+
+    voices.delete(
+        midi
+    );
+
+
+    const time =
+        audioContext.currentTime;
+
+
+    const release =
+        releaseTime ??
+        voice.preset.release;
+
+
+    const gain =
+        voice.amp.gain;
+
+
+    if (
+        gain.cancelAndHoldAtTime
+    ) {
+
+        gain.cancelAndHoldAtTime(
+            time
+        );
+
+    }
+
+    else {
+
+        const current =
+            gain.value;
+
+
+        gain.cancelScheduledValues(
+            time
+        );
+
+
+        gain.setValueAtTime(
+            current,
+            time
+        );
+
+    }
+
+
+    gain.setTargetAtTime(
+        0,
+        time,
+        release / 4
+    );
+
+
+    const stopTime =
+        time +
+        release +
+        0.15;
+
+
+    voice.oscillators
+        .forEach(
+            oscillator => {
+
+                try {
+
+                    oscillator.stop(
+                        stopTime
+                    );
+
+                }
+
+                catch (_) {}
+
+            }
+        );
+
+
+    voice.oscillators[0]
+        .onended = () => {
+
+            try {
+
+                voice.amp.disconnect();
+
+            }
+
+            catch (_) {}
+
+
+            try {
+
+                voice.filter.disconnect();
+
+            }
+
+            catch (_) {}
+
+        };
+
+}
+
+
+/* =========================================================
+   ACTIVE KEY VISUAL
+========================================================= */
+
+function activateKey(
+    midi
+) {
+
+    const key =
+        keyElements.get(
+            midi
+        );
+
+
+    if (!key) {
+
+        return;
+
+    }
+
+
+    key.classList.add(
+        'active'
+    );
+
+
+    nowEl.textContent =
+        noteName(
+            midi
+        );
+
+
+    nowEl.classList.add(
+        'on'
+    );
+
+}
+
+
+/* =========================================================
+   DEACTIVATE KEY VISUAL
+========================================================= */
+
+function deactivateKey(
+    midi
+) {
+
+    const key =
+        keyElements.get(
+            midi
+        );
+
+
+    if (!key) {
+
+        return;
+
+    }
+
+
+    key.classList.remove(
+        'active'
+    );
+
+
+    if (
+        voices.size === 0
+    ) {
+
+        nowEl.classList.remove(
+            'on'
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   MASTER PRESS
+========================================================= */
+
+function playNote(
+    midi,
+    velocity = 0.75
+) {
+
+    if (
+        !started
+    ) {
+
+        return;
+
+    }
+
+
+    noteOn(
+        midi,
+        velocity
+    );
+
+
+    activateKey(
+        midi
+    );
+
+}
+
+
+/* =========================================================
+   MASTER RELEASE
+========================================================= */
+
+function stopNote(
+    midi
+) {
+
+    noteOff(
+        midi
+    );
+
+
+    deactivateKey(
+        midi
+    );
+
+}
+
+
+/* =========================================================
+   INSTRUMENT CHANGE
+========================================================= */
+
+$('instrument')
+    .addEventListener(
+        'change',
+        () => {
+
+            /*
+             * Existing voices are allowed
+             * to finish naturally.
+             *
+             * New notes use the
+             * selected instrument.
+             */
+
+            const name =
+                INSTRUMENTS[
+                    $('instrument').value
+                ].name;
+
+
+            $('statusText')
+                .textContent =
+                name;
+
+        }
+    );
+
+
+/* =========================================================
+   REBUILD AUDIO GRAPH AFTER START
+========================================================= */
+
+const originalStart =
+    $('start').onclick;
+
+
+/*
+ * The click listener from Part 1
+ * initializes the basic context.
+ *
+ * This listener runs after it and
+ * upgrades the graph.
+ */
+
+$('start')
+    .addEventListener(
+        'click',
+        () => {
+
+            setupAudioGraph();
+
+            updateMix();
+
+        }
+    );
+
+
+/* =========================================================
+   ANALYSER DATA
+========================================================= */
+
+const analyserData =
+    new Uint8Array(
+        512
+    );
+
+
+/* =========================================================
+   VISUALIZER
+========================================================= */
+
+function drawVisualizer() {
+
+    requestAnimationFrame(
+        drawVisualizer
+    );
+
+
+    if (
+        !analyser
+    ) {
+
+        return;
+
+    }
+
+
+    const canvas =
+        $('scope');
+
+
+    const context =
+        canvas.getContext(
+            '2d'
+        );
+
+
+    analyser.getByteTimeDomainData(
+        analyserData
+    );
+
+
+    context.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    context.beginPath();
+
+
+    const width =
+        canvas.width;
+
+
+    const height =
+        canvas.height;
+
+
+    for (
+        let i = 0;
+        i < analyserData.length;
+        i++
+    ) {
+
+        const x =
+            (
+                i /
+                (analyserData.length - 1)
+            ) *
+            width;
+
+
+        const y =
+            (
+                analyserData[i] /
+                255
+            ) *
+            height;
+
+
+        if (
+            i === 0
+        ) {
+
+            context.moveTo(
+                x,
+                y
+            );
+
+        }
+
+        else {
+
+            context.lineTo(
+                x,
+                y
+            );
+
+        }
+
+    }
+
+
+    context.strokeStyle =
+        '#e5252a';
+
+
+    context.lineWidth =
+        2;
+
+
+    context.stroke();
+
+}
+
+
+/* =========================================================
+   START VISUALIZER
+========================================================= */
+
+drawVisualizer();
+
+
+/* =========================================================
+   POINTER VELOCITY
+========================================================= */
+
+function calculateVelocity(
+    event,
+    key
+) {
+
+    const rect =
+        key.getBoundingClientRect();
+
+
+    const relative =
+        (
+            event.clientY -
+            rect.top
+        ) /
+        rect.height;
+
+
+    return clamp(
+        0.30 +
+        relative * 0.70,
+        0.25,
+        1
+    );
+
+}
+
+
+/* =========================================================
+   POINTER STATE
+========================================================= */
+
+const pointerNotes =
+    new Map();
+
+
+/* =========================================================
+   FIND MIDI FROM ELEMENT
+========================================================= */
+
+function midiFromElement(
+    element
+) {
+
+    const key =
+        element?.closest?.(
+            '.key'
+        );
+
+
+    if (!key) {
+
+        return null;
+
+    }
+
+
+    return Number(
+        key.dataset.midi
+    );
+
+}
+
+
+/* =========================================================
+   POINTER DOWN
+========================================================= */
+
+keysEl.addEventListener(
+    'pointerdown',
+    event => {
+
+        const midi =
+            midiFromElement(
+                event.target
+            );
+
+
+        if (
+            midi === null
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            event.pointerType ===
+            'mouse' &&
+            event.button !== 0
+        ) {
+
+            return;
+
+        }
+
+
+        event.preventDefault();
+
+
+        const key =
+            keyElements.get(
+                midi
+            );
+
+
+        const velocity =
+            calculateVelocity(
+                event,
+                key
+            );
+
+
+        pointerNotes.set(
+            event.pointerId,
+            midi
+        );
+
+
+        playNote(
+            midi,
+            velocity
+        );
+
+    }
+);
+
+
+/* =========================================================
+   POINTER DRAG
+========================================================= */
+
+keysEl.addEventListener(
+    'pointerover',
+    event => {
+
+        if (
+            event.pointerType !==
+            'mouse'
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            !(event.buttons & 1)
+        ) {
+
+            return;
+
+        }
+
+
+        const midi =
+            midiFromElement(
+                event.target
+            );
+
+
+        if (
+            midi === null
+        ) {
+
+            return;
+
+        }
+
+
+        const previous =
+            pointerNotes.get(
+                event.pointerId
+            );
+
+
+        if (
+            previous === midi
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            previous !== undefined
+        ) {
+
+            stopNote(
+                previous
+            );
+
+        }
+
+
+        pointerNotes.set(
+            event.pointerId,
+            midi
+        );
+
+
+        const key =
+            keyElements.get(
+                midi
+            );
+
+
+        const velocity =
+            calculateVelocity(
+                event,
+                key
+            );
+
+
+        playNote(
+            midi,
+            velocity
+        );
+
+    }
+);
+
+
+/* =========================================================
+   POINTER RELEASE
+========================================================= */
+
+function endPointer(
+    event
+) {
+
+    const midi =
+        pointerNotes.get(
+            event.pointerId
+        );
+
+
+    if (
+        midi === undefined
+    ) {
+
+        return;
+
+    }
+
+
+    pointerNotes.delete(
+        event.pointerId
+    );
+
+
+    stopNote(
+        midi
+    );
+
+}
+
+
+window.addEventListener(
+    'pointerup',
+    endPointer
+);
+
+
+window.addEventListener(
+    'pointercancel',
+    endPointer
+);
+
+
+/* =========================================================
+   DISABLE CONTEXT MENU
+========================================================= */
+
+keysEl.addEventListener(
+    'contextmenu',
+    event => {
+
+        event.preventDefault();
+
+    }
+);
+
+
+/* =========================================================
+   PART 3 / 5
+   PERFORMANCE + RECORDING SYSTEM
+========================================================= */
+
+
+/* =========================================================
+   PERFORMANCE STATE
+========================================================= */
+
+const heldKeys =
+    new Map();
+
+const sustainedNotes =
+    new Set();
+
+let sustainEnabled =
+    false;
+
+let recording =
+    false;
+
+let recordingStart =
+    0;
+
+let recordedEvents =
+    [];
+
+let playbackTimers =
+    [];
+
+let isPlaying =
+    false;
+
+
+/* =========================================================
+   RECORDING CLOCK
+========================================================= */
+
+function recordingTime() {
+
+    if (!recording) {
+
+        return 0;
+
+    }
+
+    return performance.now() -
+        recordingStart;
+
+}
+
+
+/* =========================================================
+   RECORD NOTE ON
+========================================================= */
+
+function recordNoteOn(
+    midi,
+    velocity
+) {
+
+    if (!recording) {
+
+        return;
+
+    }
+
+
+    recordedEvents.push({
+
+        time:
+            recordingTime(),
+
+        midi,
+
+        velocity,
+
+        type:
+            'on'
+
+    });
+
+}
+
+
+/* =========================================================
+   RECORD NOTE OFF
+========================================================= */
+
+function recordNoteOff(
+    midi
+) {
+
+    if (!recording) {
+
+        return;
+
+    }
+
+
+    recordedEvents.push({
+
+        time:
+            recordingTime(),
+
+        midi,
+
+        velocity:
+            0,
+
+        type:
+            'off'
+
+    });
+
+}
+
+
+/* =========================================================
+   RECORD PEDAL
+========================================================= */
+
+function recordPedal(
+    state
+) {
+
+    if (!recording) {
+
+        return;
+
+    }
+
+
+    recordedEvents.push({
+
+        time:
+            recordingTime(),
+
+        midi:
+            0,
+
+        velocity:
+            0,
+
+        type:
+            state
+                ? 'pedalOn'
+                : 'pedalOff'
+
+    });
+
+}
+
+
+/* =========================================================
+   EXTENDED PLAY NOTE
+========================================================= */
+
+const originalPlayNote =
+    playNote;
+
+
+playNote = function (
+    midi,
+    velocity = 0.75,
+    fromPlayback = false
+) {
+
+    originalPlayNote(
+        midi,
+        velocity
+    );
+
+
+    if (
+        !fromPlayback
+    ) {
+
+        recordNoteOn(
+            midi,
+            velocity
+        );
+
+    }
+
+};
+
+
+/* =========================================================
+   EXTENDED STOP NOTE
+========================================================= */
+
+const originalStopNote =
+    stopNote;
+
+
+stopNote = function (
+    midi,
+    fromPlayback = false
+) {
+
+    originalStopNote(
+        midi
+    );
+
+
+    if (
+        !fromPlayback
+    ) {
+
+        recordNoteOff(
+            midi
+        );
+
+    }
+
+};
+
+
+/* =========================================================
+   SUSTAIN PEDAL
+========================================================= */
+
+function setSustain(
+    enabled
+) {
+
+    if (
+        sustainEnabled ===
+        enabled
+    ) {
+
+        return;
+
+    }
+
+
+    sustainEnabled =
+        enabled;
+
+
+    $('sustain')
+        .classList.toggle(
+            'active',
+            enabled
+        );
+
+
+    recordPedal(
+        enabled
+    );
+
+
+    if (
+        !enabled
+    ) {
+
+        sustainedNotes
+            .forEach(
+                midi => {
+
+                    originalStopNote(
+                        midi
+                    );
+
+                }
+            );
+
+
+        sustainedNotes.clear();
+
+    }
+
+}
+
+
+/* =========================================================
+   RELEASE WITH SUSTAIN
+========================================================= */
+
+function releaseWithSustain(
+    midi
+) {
+
+    const key =
+        keyElements.get(
+            midi
+        );
+
+
+    if (key) {
+
+        key.classList.remove(
+            'active'
+        );
+
+    }
+
+
+    if (
+        sustainEnabled
+    ) {
+
+        sustainedNotes.add(
+            midi
+        );
+
+        if (key) {
+
+            key.style.filter =
+                'brightness(0.96)';
+
+        }
+
+        return;
+
+    }
+
+
+    stopNote(
+        midi
+    );
+
+}
+
+
+/* =========================================================
+   SUSTAIN BUTTON
+========================================================= */
+
+$('sustain')
+    .addEventListener(
+        'pointerdown',
+        event => {
+
+            event.preventDefault();
+
+            setSustain(
+                true
+            );
+
+        }
+    );
+
+
+$('sustain')
+    .addEventListener(
+        'pointerup',
+        () => {
+
+            setSustain(
+                false
+            );
+
+        }
+    );
+
+
+$('sustain')
+    .addEventListener(
+        'pointerleave',
+        () => {
+
+            setSustain(
+                false
+            );
+
+        }
+    );
+
+
+$('sustain')
+    .addEventListener(
+        'pointercancel',
+        () => {
+
+            setSustain(
+                false
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   RECORD BUTTON
+========================================================= */
+
+$('record')
+    .addEventListener(
+        'click',
+        () => {
+
+            if (
+                !started
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                !recording
+            ) {
+
+                startRecording();
+
+            }
+
+            else {
+
+                stopRecording();
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   START RECORDING
+========================================================= */
+
+function startRecording() {
+
+    recordedEvents =
+        [];
+
+
+    recording =
+        true;
+
+
+    recordingStart =
+        performance.now();
+
+
+    $('record')
+        .classList.add(
+            'active'
+        );
+
+
+    $('record')
+        .textContent =
+        '■ Stop';
+
+
+    $('statusText')
+        .textContent =
+        'Recording';
+
+
+    $('play').disabled =
+        true;
+
+}
+
+
+/* =========================================================
+   STOP RECORDING
+========================================================= */
+
+function stopRecording() {
+
+    recording =
+        false;
+
+
+    $('record')
+        .classList.remove(
+            'active'
+        );
+
+
+    $('record')
+        .textContent =
+        '● Rec';
+
+
+    $('statusText')
+        .textContent =
+        recordedEvents.length
+            ? 'Recording Ready'
+            : 'Ready';
+
+
+    $('play').disabled =
+        recordedEvents.length === 0;
+
+}
+
+
+/* =========================================================
+   CLEAN RECORDING
+========================================================= */
+
+function cleanRecording() {
+
+    if (
+        !recordedEvents.length
+    ) {
+
+        return [];
+
+    }
+
+
+    return recordedEvents
+        .map(
+            event => ({
+                ...event
+            })
+        )
+        .sort(
+            (a, b) =>
+                a.time - b.time
+        );
+
+}
+
+
+/* =========================================================
+   PLAYBACK
+========================================================= */
+
+$('play')
+    .addEventListener(
+        'click',
+        () => {
+
+            if (
+                isPlaying
+            ) {
+
+                stopPlayback();
+
+            }
+
+            else {
+
+                startPlayback();
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   START PLAYBACK
+========================================================= */
+
+function startPlayback() {
+
+    if (
+        !recordedEvents.length
+    ) {
+
+        return;
+
+    }
+
+
+    stopPlayback();
+
+
+    const events =
+        cleanRecording();
+
+
+    if (
+        !events.length
+    ) {
+
+        return;
+
+    }
+
+
+    isPlaying =
+        true;
+
+
+    $('play')
+        .classList.add(
+            'active'
+        );
+
+
+    $('play')
+        .textContent =
+        '■ Stop';
+
+
+    $('record').disabled =
+        true;
+
+
+    $('statusText')
+        .textContent =
+        'Playing';
+
+
+    events.forEach(
+        event => {
+
+            const timer =
+                setTimeout(
+                    () => {
+
+                        handlePlaybackEvent(
+                            event
+                        );
+
+                    },
+                    event.time
+                );
+
+
+            playbackTimers.push(
+                timer
+            );
+
+        }
+    );
+
+
+    const duration =
+        events[
+            events.length - 1
+        ].time + 700;
+
+
+    playbackTimers.push(
+
+        setTimeout(
+            () => {
+
+                finishPlayback();
+
+            },
+            duration
+        )
+
+    );
+
+}
+
+
+/* =========================================================
+   PLAYBACK EVENT
+========================================================= */
+
+function handlePlaybackEvent(
+    event
+) {
+
+    if (
+        !isPlaying
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        event.type ===
+        'on'
+    ) {
+
+        playNote(
+            event.midi,
+            event.velocity,
+            true
+        );
+
+    }
+
+
+    else if (
+        event.type ===
+        'off'
+    ) {
+
+        stopNote(
+            event.midi,
+            true
+        );
+
+    }
+
+
+    else if (
+        event.type ===
+        'pedalOn'
+    ) {
+
+        sustainEnabled =
+            true;
+
+        $('sustain')
+            .classList.add(
+                'active'
+            );
+
+    }
+
+
+    else if (
+        event.type ===
+        'pedalOff'
+    ) {
+
+        sustainEnabled =
+            false;
+
+        $('sustain')
+            .classList.remove(
+                'active'
+            );
+
+    }
+
+}
+
+
+/* =========================================================
+   FINISH PLAYBACK
+========================================================= */
+
+function finishPlayback() {
+
+    playbackTimers =
+        [];
+
+
+    isPlaying =
+        false;
+
+
+    $('play')
+        .classList.remove(
+            'active'
+        );
+
+
+    $('play')
+        .textContent =
+        '▶ Play';
+
+
+    $('record').disabled =
+        false;
+
+
+    releaseEverything();
+
+
+    $('statusText')
+        .textContent =
+        'Recording Ready';
+
+}
+
+
+/* =========================================================
+   STOP PLAYBACK
+========================================================= */
+
+function stopPlayback() {
+
+    playbackTimers
+        .forEach(
+            timer =>
+                clearTimeout(
+                    timer
+                )
+        );
+
+
+    playbackTimers =
+        [];
+
+
+    isPlaying =
+        false;
+
+
+    releaseEverything();
+
+
+    $('play')
+        .classList.remove(
+            'active'
+        );
+
+
+    $('play')
+        .textContent =
+        '▶ Play';
+
+
+    $('record').disabled =
+        false;
+
+}
+
+
+/* =========================================================
+   RELEASE EVERYTHING
+========================================================= */
+
+function releaseEverything() {
+
+    heldKeys.forEach(
+        midi => {
+
+            originalStopNote(
+                midi
+            );
+
+            const key =
+                keyElements.get(
+                    midi
+                );
+
+
+            if (key) {
+
+                key.classList.remove(
+                    'active'
+                );
+
+                key.style.filter =
+                    '';
+
+            }
+
+        }
+    );
+
+
+    heldKeys.clear();
+
+
+    sustainedNotes.forEach(
+        midi => {
+
+            originalStopNote(
+                midi
+            );
+
+
+            const key =
+                keyElements.get(
+                    midi
+                );
+
+
+            if (key) {
+
+                key.classList.remove(
+                    'active'
+                );
+
+                key.style.filter =
+                    '';
+
+            }
+
+        }
+    );
+
+
+    sustainedNotes.clear();
+
+
+    voices.forEach(
+        (_, midi) => {
+
+            originalStopNote(
+                midi
+            );
+
+        }
+    );
+
+
+    voices.clear();
+
+
+    nowEl.classList.remove(
+        'on'
+    );
+
+
+    nowEl.textContent =
+        '—';
+
+}
+
+
+/* =========================================================
+   KEYBOARD INPUT
+========================================================= */
+
+window.addEventListener(
+    'keydown',
+    event => {
+
+        if (
+            event.ctrlKey ||
+            event.metaKey ||
+            event.altKey
+        ) {
+
+            return;
+
+        }
+
+
+        /* -------------------------------------------------
+           SPACE = SUSTAIN
+        ------------------------------------------------- */
+
+        if (
+            event.code ===
+            'Space'
+        ) {
+
+            if (
+                event.repeat
+            ) {
+
+                return;
+
+            }
+
+
+            event.preventDefault();
+
+
+            setSustain(
+                true
+            );
+
+
+            return;
+
+        }
+
+
+        /* -------------------------------------------------
+           ARROW LEFT = OCTAVE DOWN
+        ------------------------------------------------- */
+
+        if (
+            event.key ===
+            'ArrowLeft'
+        ) {
+
+            if (
+                event.target.tagName ===
+                'INPUT'
+            ) {
+
+                return;
+
+            }
+
+
+            event.preventDefault();
+
+
+            if (
+                !event.repeat
+            ) {
+
+                $('octDown').click();
+
+            }
+
+
+            return;
+
+        }
+
+
+        /* -------------------------------------------------
+           ARROW RIGHT = OCTAVE UP
+        ------------------------------------------------- */
+
+        if (
+            event.key ===
+            'ArrowRight'
+        ) {
+
+            if (
+                event.target.tagName ===
+                'INPUT'
+            ) {
+
+                return;
+
+            }
+
+
+            event.preventDefault();
+
+
+            if (
+                !event.repeat
+            ) {
+
+                $('octUp').click();
+
+            }
+
+
+            return;
+
+        }
+
+
+        /* -------------------------------------------------
+           IGNORE FORM INPUTS
+        ------------------------------------------------- */
+
+        if (
+            event.target.tagName ===
+            'INPUT' ||
+            event.target.tagName ===
+            'SELECT'
+        ) {
+
+            return;
+
+        }
+
+
+        const char =
+            event.key.toLowerCase();
+
+
+        if (
+            !charMap.has(
+                char
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        event.preventDefault();
+
+
+        if (
+            event.repeat ||
+            heldKeys.has(
+                char
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        const midi =
+            charMap.get(
+                char
+            );
+
+
+        heldKeys.set(
+            char,
+            midi
+        );
+
+
+        playNote(
+            midi,
+            0.78
+        );
+
+    }
+);
+
+
+/* =========================================================
+   KEYBOARD RELEASE
+========================================================= */
+
+window.addEventListener(
+    'keyup',
+    event => {
+
+        /* -----------------------------------------------
+           SPACE
+        ----------------------------------------------- */
+
+        if (
+            event.code ===
+            'Space'
+        ) {
+
+            event.preventDefault();
+
+
+            setSustain(
+                false
+            );
+
+
+            return;
+
+        }
+
+
+        const char =
+            event.key.toLowerCase();
+
+
+        if (
+            !heldKeys.has(
+                char
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        const midi =
+            heldKeys.get(
+                char
+            );
+
+
+        heldKeys.delete(
+            char
+        );
+
+
+        releaseWithSustain(
+            midi
+        );
+
+    }
+);
+
+
+/* =========================================================
+   POINTER RELEASE OVERRIDE
+========================================================= */
+
+const previousPointerRelease =
+    endPointer;
+
+
+function improvedPointerRelease(
+    event
+) {
+
+    const midi =
+        pointerNotes.get(
+            event.pointerId
+        );
+
+
+    if (
+        midi === undefined
+    ) {
+
+        return;
+
+    }
+
+
+    pointerNotes.delete(
+        event.pointerId
+    );
+
+
+    releaseWithSustain(
+        midi
+    );
+
+}
+
+
+window.removeEventListener(
+    'pointerup',
+    previousPointerRelease
+);
+
+
+window.removeEventListener(
+    'pointercancel',
+    previousPointerRelease
+);
+
+
+window.addEventListener(
+    'pointerup',
+    improvedPointerRelease
+);
+
+
+window.addEventListener(
+    'pointercancel',
+    improvedPointerRelease
+);
+
+
+/* =========================================================
+   WINDOW BLUR SAFETY
+========================================================= */
+
+window.addEventListener(
+    'blur',
+    () => {
+
+        setSustain(
+            false
+        );
+
+
+        stopPlayback();
+
+
+        releaseEverything();
+
+    }
+);
+
+
+/* =========================================================
+   PAGE VISIBILITY SAFETY
+========================================================= */
+
+document.addEventListener(
+    'visibilitychange',
+    () => {
+
+        if (
+            document.hidden
+        ) {
+
+            setSustain(
+                false
+            );
+
+            releaseEverything();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   RECORDING STATISTICS
+========================================================= */
+
+function getRecordingStats() {
+
+    const notes =
+        recordedEvents.filter(
+            event =>
+                event.type ===
+                'on'
+        );
+
+
+    const duration =
+        recordedEvents.length
+            ? recordedEvents[
+                recordedEvents.length - 1
+              ].time
+            : 0;
+
+
+    return {
+
+        notes:
+            notes.length,
+
+        events:
+            recordedEvents.length,
+
+        duration:
+            duration,
+
+        seconds:
+            duration / 1000
+
+    };
+
+}
+
+
+/* =========================================================
+   RECORDING STATUS UPDATE
+========================================================= */
+
+function updateRecordingStatus() {
+
+    if (
+        recording
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        !recordedEvents.length
+    ) {
+
+        $('statusText')
+            .textContent =
+            'Ready';
+
+        return;
+
+    }
+
+
+    const stats =
+        getRecordingStats();
+
+
+    $('statusText')
+        .textContent =
+        `${stats.notes} notes • ` +
+        `${stats.seconds.toFixed(1)}s`;
+
+}
+
+
+/* =========================================================
+   PERIODIC RECORDING STATUS
+========================================================= */
+
+setInterval(
+    () => {
+
+        updateRecordingStatus();
+
+    },
+    500
+);
+
+
+/* =========================================================
+   INITIAL STATE
+========================================================= */
+
+$('play').disabled =
+    true;
+
+
+$('record').disabled =
+    false;
+
+
+/* =========================================================
+   PART 4 / 5
+   SONG LEARNING + PRACTICE MODE
+========================================================= */
+
+
+/* =========================================================
+   PRACTICE ENGINE STATE
+========================================================= */
+
+let practiceMode =
+    false;
+
+let practiceRunning =
+    false;
+
+let practicePaused =
+    false;
+
+let practiceStartTime =
+    0;
+
+let practiceTimer =
+    null;
+
+let practiceIndex =
+    0;
+
+let practiceScore =
+    0;
+
+let practiceCombo =
+    0;
+
+let practiceMaxCombo =
+    0;
+
+let practiceHits =
+    0;
+
+let practiceMisses =
+    0;
+
+let practiceTotal =
+    0;
+
+let practiceNotes =
+    [];
+
+let practiceAnimation =
+    null;
+
+
+/* =========================================================
+   PRACTICE SETTINGS
+========================================================= */
+
+let practiceBPM =
+    100;
+
+let practiceSpeed =
+    1;
+
+let hitWindow =
+    180;
+
+
+/* =========================================================
+   SONG LIBRARY
+========================================================= */
+
+const SONG_LIBRARY = {
+
+
+    twinkle: {
+
+        name:
+            'Twinkle Twinkle Little Star',
+
+        bpm:
+            100,
+
+        notes: [
+
+            { n: 60, d: 1 },
+            { n: 60, d: 1 },
+            { n: 67, d: 1 },
+            { n: 67, d: 1 },
+
+            { n: 69, d: 1 },
+            { n: 69, d: 1 },
+            { n: 67, d: 2 },
+
+            { n: 65, d: 1 },
+            { n: 65, d: 1 },
+            { n: 64, d: 1 },
+            { n: 64, d: 1 },
+
+            { n: 62, d: 1 },
+            { n: 62, d: 1 },
+            { n: 60, d: 2 }
+
+        ]
+
+    },
+
+
+    scale: {
+
+        name:
+            'C Major Scale',
+
+        bpm:
+            110,
+
+        notes: [
+
+            { n: 60, d: 1 },
+            { n: 62, d: 1 },
+            { n: 64, d: 1 },
+            { n: 65, d: 1 },
+
+            { n: 67, d: 1 },
+            { n: 69, d: 1 },
+            { n: 71, d: 1 },
+            { n: 72, d: 2 },
+
+            { n: 71, d: 1 },
+            { n: 69, d: 1 },
+            { n: 67, d: 1 },
+            { n: 65, d: 1 },
+
+            { n: 64, d: 1 },
+            { n: 62, d: 1 },
+            { n: 60, d: 2 }
+
+        ]
+
+    },
+
+
+    arpeggio: {
+
+        name:
+            'C Major Arpeggio',
+
+        bpm:
+            90,
+
+        notes: [
+
+            { n: 60, d: 1 },
+            { n: 64, d: 1 },
+            { n: 67, d: 1 },
+            { n: 72, d: 2 },
+
+            { n: 67, d: 1 },
+            { n: 64, d: 1 },
+            { n: 60, d: 2 }
+
+        ]
+
+    }
+
+};
+
+
+/* =========================================================
+   CURRENT SONG
+========================================================= */
+
+let currentSong =
+    SONG_LIBRARY.twinkle;
+
+
+/* =========================================================
+   CREATE PRACTICE PANEL
+========================================================= */
+
+const practicePanel =
+    document.createElement(
+        'section'
+    );
+
+
+practicePanel.id =
+    'practicePanel';
+
+
+practicePanel.innerHTML = `
+
+    <div class="practice-header">
+
+        <div>
+
+            <strong>
+                🎵 Practice Mode
+            </strong>
+
+            <span id="practiceSongName">
+                ${currentSong.name}
+            </span>
+
+        </div>
+
+        <div class="practice-controls">
+
+            <select id="songSelect">
+
+                <option value="twinkle">
+                    Twinkle Twinkle Little Star
+                </option>
+
+                <option value="scale">
+                    C Major Scale
+                </option>
+
+                <option value="arpeggio">
+                    C Major Arpeggio
+                </option>
+
+            </select>
+
+            <button
+                class="btn"
+                id="practiceStart">
+
+                ▶ Start
+
+            </button>
+
+            <button
+                class="btn"
+                id="practicePause">
+
+                ⏸ Pause
+
+            </button>
+
+            <button
+                class="btn"
+                id="practiceReset">
+
+                ↻ Reset
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="practice-stats">
+
+        <div>
+            <small>Score</small>
+            <strong id="practiceScore">
+                0
+            </strong>
+        </div>
+
+        <div>
+            <small>Accuracy</small>
+            <strong id="practiceAccuracy">
+                100%
+            </strong>
+        </div>
+
+        <div>
+            <small>Combo</small>
+            <strong id="practiceCombo">
+                0
+            </strong>
+        </div>
+
+        <div>
+            <small>Best Combo</small>
+            <strong id="practiceBest">
+                0
+            </strong>
+        </div>
+
+        <div>
+            <small>BPM</small>
+            <input
+                id="practiceBPM"
+                type="range"
+                min="40"
+                max="200"
+                value="${currentSong.bpm}">
+            <span id="practiceBPMValue">
+                ${currentSong.bpm}
+            </span>
+        </div>
+
+    </div>
+
+
+    <div
+        class="falling-area"
+        id="fallingArea">
+
+        <div
+            class="hit-line"
+            id="hitLine">
+        </div>
+
+        <div
+            class="falling-notes"
+            id="fallingNotes">
+        </div>
+
+        <div
+            class="practice-message"
+            id="practiceMessage">
+
+            Press Start to Practice
+
+        </div>
+
+    </div>
+
+`;
+
+
+/* =========================================================
+   INSERT PANEL
+========================================================= */
+
+document
+    .querySelector('.workspace')
+    .prepend(
+        practicePanel
+    );
+
+
+/* =========================================================
+   PRACTICE PANEL STYLE
+========================================================= */
+
+const practiceStyle =
+    document.createElement(
+        'style'
+    );
+
+
+practiceStyle.textContent = `
+
+#practicePanel {
+
+    margin:
+        0
+        clamp(12px,3vw,42px);
+
+    background:
+        rgba(10,11,14,.82);
+
+    border:
+        1px solid
+        rgba(255,255,255,.07);
+
+    border-radius:
+        12px;
+
+    overflow:
+        hidden;
+
+    box-shadow:
+        inset 0 0 30px
+        rgba(0,0,0,.35);
+
+}
+
+
+.practice-header {
+
+    min-height:
+        52px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    padding:
+        8px 14px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.06);
+
+}
+
+
+.practice-header strong {
+
+    display:
+        block;
+
+    font-size:
+        .82rem;
+
+}
+
+
+#practiceSongName {
+
+    color:
+        #858b98;
+
+    font-size:
+        .68rem;
+
+}
+
+
+.practice-controls {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        6px;
+
+}
+
+
+.practice-stats {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        22px;
+
+    padding:
+        7px 14px;
+
+    color:
+        #858b98;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.04);
+
+}
+
+
+.practice-stats div {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        6px;
+
+}
+
+
+.practice-stats small {
+
+    font-size:
+        .6rem;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.practice-stats strong {
+
+    color:
+        white;
+
+    font-size:
+        .78rem;
+
+}
+
+
+.practice-stats input {
+
+    width:
+        70px;
+
+    accent-color:
+        #e5252a;
+
+}
+
+
+#practiceBPMValue {
+
+    min-width:
+        24px;
+
+    color:
+        white;
+
+    font-size:
+        .72rem;
+
+}
+
+
+.falling-area {
+
+    position:
+        relative;
+
+    height:
+        150px;
+
+    overflow:
+        hidden;
+
+    background:
+        linear-gradient(
+            180deg,
+            #0d0f13,
+            #11141a
+        );
+
+}
+
+
+.hit-line {
+
+    position:
+        absolute;
+
+    left:
+        0;
+
+    right:
+        0;
+
+    bottom:
+        22px;
+
+    height:
+        2px;
+
+    background:
+        #e5252a;
+
+    box-shadow:
+        0 0 12px
+        rgba(229,37,42,.6);
+
+    z-index:
+        5;
+
+}
+
+
+.falling-notes {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+}
+
+
+.falling-note {
+
+    position:
+        absolute;
+
+    width:
+        34px;
+
+    height:
+        10px;
+
+    border-radius:
+        5px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ff565b,
+            #e5252a
+        );
+
+    box-shadow:
+        0 0 14px
+        rgba(229,37,42,.55);
+
+    transform:
+        translateX(-50%);
+
+}
+
+
+.falling-note.current {
+
+    box-shadow:
+        0 0 20px
+        rgba(255,255,255,.8);
+
+}
+
+
+.practice-message {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    color:
+        #777d89;
+
+    font-size:
+        .75rem;
+
+    pointer-events:
+        none;
+
+}
+
+
+@media(max-width:700px) {
+
+    .practice-header {
+
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+
+    }
+
+    .practice-controls {
+
+        flex-wrap:
+            wrap;
+
+    }
+
+    .practice-stats {
+
+        gap:
+            10px;
+
+        overflow-x:
+            auto;
+
+    }
+
+}
+
+`;
+
+
+document.head.appendChild(
+    practiceStyle
+);
+
+
+/* =========================================================
+   PRACTICE ELEMENTS
+========================================================= */
+
+const songSelect =
+    $('songSelect');
+
+const practiceStartButton =
+    $('practiceStart');
+
+const practicePauseButton =
+    $('practicePause');
+
+const practiceResetButton =
+    $('practiceReset');
+
+const practiceBPMInput =
+    $('practiceBPM');
+
+const practiceBPMValue =
+    $('practiceBPMValue');
+
+const fallingArea =
+    $('fallingArea');
+
+const fallingNotes =
+    $('fallingNotes');
+
+const practiceMessage =
+    $('practiceMessage');
+
+
+/* =========================================================
+   SONG SELECT
+========================================================= */
+
+songSelect.addEventListener(
+    'change',
+    () => {
+
+        const song =
+            SONG_LIBRARY[
+                songSelect.value
+            ];
+
+
+        if (!song) {
+
+            return;
+
+        }
+
+
+        currentSong =
+            song;
+
+
+        practiceBPM =
+            song.bpm;
+
+
+        practiceBPMInput.value =
+            song.bpm;
+
+
+        practiceBPMValue.textContent =
+            song.bpm;
+
+
+        $('practiceSongName')
+            .textContent =
+            song.name;
+
+
+        resetPractice();
+
+    }
+);
+
+
+/* =========================================================
+   BPM CONTROL
+========================================================= */
+
+practiceBPMInput
+    .addEventListener(
+        'input',
+        () => {
+
+            practiceBPM =
+                Number(
+                    practiceBPMInput.value
+                );
+
+
+            practiceBPMValue.textContent =
+                practiceBPM;
+
+        }
+    );
+
+
+/* =========================================================
+   NOTE TIMING
+========================================================= */
+
+function beatDuration() {
+
+    return (
+        60000 /
+        practiceBPM
+    );
+
+}
+
+
+/* =========================================================
+   PREPARE SONG
+========================================================= */
+
+function prepareSong() {
+
+    practiceNotes =
+        currentSong.notes.map(
+            (note, index) => {
+
+                return {
+
+                    midi:
+                        note.n,
+
+                    duration:
+                        note.d,
+
+                    index,
+
+                    time:
+                        0,
+
+                    hit:
+                        false,
+
+                    missed:
+                        false
+
+                };
+
+            }
+        );
+
+
+    let accumulated =
+        0;
+
+
+    practiceNotes.forEach(
+        note => {
+
+            note.time =
+                accumulated;
+
+
+            accumulated +=
+                note.duration *
+                beatDuration();
+
+        }
+    );
+
+
+    practiceTotal =
+        practiceNotes.length;
+
+
+    practiceIndex =
+        0;
+
+}
+
+
+/* =========================================================
+   START PRACTICE
+========================================================= */
+
+practiceStartButton
+    .addEventListener(
+        'click',
+        () => {
+
+            if (
+                practiceRunning &&
+                practicePaused
+            ) {
+
+                resumePractice();
+
+                return;
+
+            }
+
+
+            startPractice();
+
+        }
+    );
+
+
+/* =========================================================
+   START NEW PRACTICE
+========================================================= */
+
+function startPractice() {
+
+    stopPracticeTimers();
+
+
+    practiceMode =
+        true;
+
+    practiceRunning =
+        true;
+
+    practicePaused =
+        false;
+
+
+    practiceScore =
+        0;
+
+    practiceCombo =
+        0;
+
+    practiceMaxCombo =
+        0;
+
+    practiceHits =
+        0;
+
+    practiceMisses =
+        0;
+
+
+    prepareSong();
+
+
+    practiceStartTime =
+        performance.now();
+
+
+    practiceStartButton
+        .textContent =
+        '↻ Restart';
+
+
+    practicePauseButton
+        .textContent =
+        '⏸ Pause';
+
+
+    practiceMessage
+        .textContent =
+        'Get Ready!';
+
+
+    updatePracticeStats();
+
+
+    clearFallingNotes();
+
+
+    setTimeout(
+        () => {
+
+            if (
+                practiceRunning
+            ) {
+
+                practiceMessage
+                    .textContent =
+                    '';
+
+            }
+
+        },
+        600
+    );
+
+
+    runPracticeLoop();
+
+}
+
+
+/* =========================================================
+   PRACTICE LOOP
+========================================================= */
+
+function runPracticeLoop() {
+
+    if (
+        !practiceRunning ||
+        practicePaused
+    ) {
+
+        return;
+
+    }
+
+
+    const elapsed =
+        performance.now() -
+        practiceStartTime;
+
+
+    updateFallingNotes(
+        elapsed
+    );
+
+
+    checkMissedNotes(
+        elapsed
+    );
+
+
+    if (
+        practiceIndex >=
+        practiceNotes.length
+    ) {
+
+        const last =
+            practiceNotes[
+                practiceNotes.length - 1
+            ];
+
+
+        if (
+            elapsed >
+            last.time +
+            last.duration *
+            beatDuration() +
+            500
+        ) {
+
+            finishPractice();
+
+            return;
+
+        }
+
+    }
+
+
+    practiceAnimation =
+        requestAnimationFrame(
+            runPracticeLoop
+        );
+
+}
+
+
+/* =========================================================
+   CREATE FALLING NOTE
+========================================================= */
+
+function createFallingNote(
+    note
+) {
+
+    const element =
+        document.createElement(
+            'div'
+        );
+
+
+    element.className =
+        'falling-note';
+
+
+    if (
+        note.index ===
+        practiceIndex
+    ) {
+
+        element.classList.add(
+            'current'
+        );
+
+    }
+
+
+    const whiteIndex =
+        calculateWhiteIndex(
+            note.midi
+        );
+
+
+    const totalWidth =
+        fallingArea
+            .clientWidth;
+
+
+    const pianoWidth =
+        keyElements.size *
+        20;
+
+
+    let x =
+        (
+            whiteIndex /
+            35
+        ) *
+        totalWidth;
+
+
+    x =
+        Math.max(
+            18,
+            Math.min(
+                totalWidth - 18,
+                x
+            )
+        );
+
+
+    element.style.left =
+        `${x}px`;
+
+
+    element.dataset.index =
+        note.index;
+
+
+    fallingNotes.appendChild(
+        element
+    );
+
+
+    return element;
+
+}
+
+
+/* =========================================================
+   CALCULATE WHITE KEY POSITION
+========================================================= */
+
+function calculateWhiteIndex(
+    midi
+) {
+
+    let count =
+        0;
+
+
+    for (
+        let m = START;
+        m < midi;
+        m++
+    ) {
+
+        if (
+            !isBlack(m)
+        ) {
+
+            count++;
+
+        }
+
+    }
+
+
+    return count;
+
+}
+
+
+/* =========================================================
+   UPDATE FALLING NOTES
+========================================================= */
+
+function updateFallingNotes(
+    elapsed
+) {
+
+    const visibleTime =
+        1800;
+
+
+    fallingNotes
+        .querySelectorAll(
+            '.falling-note'
+        )
+        .forEach(
+            element => {
+
+                const index =
+                    Number(
+                        element.dataset.index
+                    );
+
+
+                const note =
+                    practiceNotes[
+                        index
+                    ];
+
+
+                if (!note) {
+
+                    element.remove();
+
+                    return;
+
+                }
+
+
+                const distance =
+                    note.time -
+                    elapsed;
+
+
+                const progress =
+                    1 -
+                    (
+                        distance /
+                        visibleTime
+                    );
+
+
+                const y =
+                    progress *
+                    (
+                        fallingArea
+                            .clientHeight -
+                        30
+                    );
+
+
+                element.style.top =
+                    `${y}px`;
+
+
+                if (
+                    note.hit ||
+                    note.missed ||
+                    y >
+                    fallingArea
+                        .clientHeight
+                ) {
+
+                    element.remove();
+
+                }
+
+            }
+        );
+
+
+    practiceNotes.forEach(
+        note => {
+
+            if (
+                note.hit ||
+                note.missed
+            ) {
+
+                return;
+
+            }
+
+
+            const distance =
+                note.time -
+                elapsed;
+
+
+            if (
+                distance <
+                visibleTime &&
+                distance >
+                -100
+            ) {
+
+                if (
+                    !fallingNotes
+                        .querySelector(
+                            `[data-index="${note.index}"]`
+                        )
+                ) {
+
+                    createFallingNote(
+                        note
+                    );
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   MISSED NOTE CHECK
+========================================================= */
+
+function checkMissedNotes(
+    elapsed
+) {
+
+    practiceNotes.forEach(
+        note => {
+
+            if (
+                note.hit ||
+                note.missed
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                elapsed >
+                note.time +
+                hitWindow
+            ) {
+
+                note.missed =
+                    true;
+
+
+                practiceMisses++;
+
+
+                practiceCombo =
+                    0;
+
+
+                showPracticeMessage(
+                    'MISS',
+                    false
+                );
+
+
+                updatePracticeStats();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   FIND NEXT NOTE
+========================================================= */
+
+function getNextPracticeNote() {
+
+    for (
+        let i = 0;
+        i < practiceNotes.length;
+        i++
+    ) {
+
+        const note =
+            practiceNotes[i];
+
+
+        if (
+            !note.hit &&
+            !note.missed
+        ) {
+
+            practiceIndex =
+                i;
+
+            return note;
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   PRACTICE NOTE MATCHING
+========================================================= */
+
+function checkPracticeInput(
+    midi
+) {
+
+    if (
+        !practiceRunning ||
+        practicePaused
+    ) {
+
+        return false;
+
+    }
+
+
+    const elapsed =
+        performance.now() -
+        practiceStartTime;
+
+
+    const note =
+        getNextPracticeNote();
+
+
+    if (!note) {
+
+        return false;
+
+    }
+
+
+    const difference =
+        Math.abs(
+            elapsed -
+            note.time
+        );
+
+
+    if (
+        note.midi === midi &&
+        difference <= hitWindow
+    ) {
+
+        registerPracticeHit(
+            note,
+            difference
+        );
+
+
+        return true;
+
+    }
+
+
+    if (
+        note.midi !== midi
+    ) {
+
+        practiceCombo =
+            0;
+
+
+        showPracticeMessage(
+            'Wrong Note',
+            false
+        );
+
+
+        updatePracticeStats();
+
+    }
+
+
+    return false;
+
+}
+
+
+/* =========================================================
+   REGISTER HIT
+========================================================= */
+
+function registerPracticeHit(
+    note,
+    difference
+) {
+
+    note.hit =
+        true;
+
+
+    practiceHits++;
+
+
+    practiceCombo++;
+
+
+    practiceMaxCombo =
+        Math.max(
+            practiceMaxCombo,
+            practiceCombo
+        );
+
+
+    let points =
+        100;
+
+
+    if (
+        difference <= 60
+    ) {
+
+        points =
+            150;
+
+    }
+
+    else if (
+        difference <= 110
+    ) {
+
+        points =
+            125;
+
+    }
+
+
+    points +=
+        Math.min(
+            practiceCombo * 5,
+            100
+        );
+
+
+    practiceScore +=
+        points;
+
+
+    practiceIndex =
+        note.index + 1;
+
+
+    showPracticeMessage(
+        difference <= 60
+            ? 'PERFECT!'
+            : 'GOOD!',
+        true
+    );
+
+
+    const element =
+        fallingNotes.querySelector(
+            `[data-index="${note.index}"]`
+        );
+
+
+    if (element) {
+
+        element.remove();
+
+    }
+
+
+    updatePracticeStats();
+
+
+    if (
+        practiceIndex >=
+        practiceNotes.length
+    ) {
+
+        setTimeout(
+            finishPractice,
+            250
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PRACTICE INPUT HOOK
+========================================================= */
+
+const practiceOriginalPlay =
+    playNote;
+
+
+playNote = function (
+    midi,
+    velocity = 0.75,
+    fromPlayback = false
+) {
+
+    practiceOriginalPlay(
+        midi,
+        velocity,
+        fromPlayback
+    );
+
+
+    if (
+        practiceMode &&
+        practiceRunning &&
+        !fromPlayback
+    ) {
+
+        checkPracticeInput(
+            midi
+        );
+
+    }
+
+};
+
+
+/* =========================================================
+   ACCURACY
+========================================================= */
+
+function getPracticeAccuracy() {
+
+    const attempts =
+        practiceHits +
+        practiceMisses;
+
+
+    if (
+        attempts === 0
+    ) {
+
+        return 100;
+
+    }
+
+
+    return Math.round(
+        (
+            practiceHits /
+            attempts
+        ) * 100
+    );
+
+}
+
+
+/* =========================================================
+   UPDATE PRACTICE STATS
+========================================================= */
+
+function updatePracticeStats() {
+
+    $('practiceScore')
+        .textContent =
+        practiceScore;
+
+
+    $('practiceAccuracy')
+        .textContent =
+        getPracticeAccuracy() +
+        '%';
+
+
+    $('practiceCombo')
+        .textContent =
+        practiceCombo;
+
+
+    $('practiceBest')
+        .textContent =
+        practiceMaxCombo;
+
+}
+
+
+/* =========================================================
+   PRACTICE MESSAGE
+========================================================= */
+
+function showPracticeMessage(
+    message,
+    success
+) {
+
+    practiceMessage
+        .textContent =
+        message;
+
+
+    practiceMessage.style.color =
+        success
+            ? '#31d17b'
+            : '#e5252a';
+
+
+    setTimeout(
+        () => {
+
+            if (
+                practiceRunning
+            ) {
+
+                practiceMessage
+                    .textContent =
+                    '';
+
+            }
+
+        },
+        350
+    );
+
+}
+
+
+/* =========================================================
+   PAUSE PRACTICE
+========================================================= */
+
+practicePauseButton
+    .addEventListener(
+        'click',
+        () => {
+
+            if (
+                !practiceRunning
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                practicePaused
+            ) {
+
+                resumePractice();
+
+            }
+
+            else {
+
+                pausePractice();
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   PAUSE
+========================================================= */
+
+function pausePractice() {
+
+    practicePaused =
+        true;
+
+
+    cancelAnimationFrame(
+        practiceAnimation
+    );
+
+
+    practicePauseButton
+        .textContent =
+        '▶ Resume';
+
+
+    practiceMessage
+        .textContent =
+        'Paused';
+
+
+    releaseEverything();
+
+}
+
+
+/* =========================================================
+   RESUME
+========================================================= */
+
+function resumePractice() {
+
+    practicePaused =
+        false;
+
+
+    const current =
+        practiceNotes[
+            practiceIndex
+        ];
+
+
+    if (
+        current
+    ) {
+
+        practiceStartTime =
+            performance.now() -
+            current.time;
+
+    }
+
+
+    practicePauseButton
+        .textContent =
+        '⏸ Pause';
+
+
+    practiceMessage
+        .textContent =
+        '';
+
+
+    runPracticeLoop();
+
+}
+
+
+/* =========================================================
+   RESET PRACTICE
+========================================================= */
+
+practiceResetButton
+    .addEventListener(
+        'click',
+        resetPractice
+    );
+
+
+function resetPractice() {
+
+    stopPracticeTimers();
+
+
+    practiceMode =
+        false;
+
+    practiceRunning =
+        false;
+
+    practicePaused =
+        false;
+
+
+    practiceScore =
+        0;
+
+    practiceCombo =
+        0;
+
+    practiceMaxCombo =
+        0;
+
+    practiceHits =
+        0;
+
+    practiceMisses =
+        0;
+
+    practiceIndex =
+        0;
+
+
+    clearFallingNotes();
+
+
+    practiceMessage
+        .textContent =
+        'Press Start to Practice';
+
+
+    practiceStartButton
+        .textContent =
+        '▶ Start';
+
+
+    practicePauseButton
+        .textContent =
+        '⏸ Pause';
+
+
+    updatePracticeStats();
+
+
+    releaseEverything();
+
+}
+
+
+/* =========================================================
+   STOP PRACTICE TIMERS
+========================================================= */
+
+function stopPracticeTimers() {
+
+    if (
+        practiceAnimation
+    ) {
+
+        cancelAnimationFrame(
+            practiceAnimation
+        );
+
+    }
+
+
+    practiceAnimation =
+        null;
+
+}
+
+
+/* =========================================================
+   CLEAR FALLING NOTES
+========================================================= */
+
+function clearFallingNotes() {
+
+    fallingNotes
+        .innerHTML =
+        '';
+
+}
+
+
+/* =========================================================
+   FINISH PRACTICE
+========================================================= */
+
+function finishPractice() {
+
+    if (
+        !practiceRunning
+    ) {
+
+        return;
+
+    }
+
+
+    practiceRunning =
+        false;
+
+
+    practiceMode =
+        false;
+
+
+    cancelAnimationFrame(
+        practiceAnimation
+    );
+
+
+    practiceAnimation =
+        null;
+
+
+    clearFallingNotes();
+
+
+    practiceMessage
+        .textContent =
+        '🎉 Song Complete!';
+
+
+    practiceMessage.style.color =
+        '#31d17b';
+
+
+    practiceStartButton
+        .textContent =
+        '▶ Play Again';
+
+
+    practicePauseButton
+        .textContent =
+        '⏸ Pause';
+
+
+    updatePracticeStats();
+
+
+    $('statusText')
+        .textContent =
+        `Score ${practiceScore}`;
+
+}
+
+
+/* =========================================================
+   PRACTICE KEYBOARD SHORTCUT
+========================================================= */
+
+window.addEventListener(
+    'keydown',
+    event => {
+
+        if (
+            event.key ===
+            'Escape'
+        ) {
+
+            resetPractice();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   PRACTICE MODE TOGGLE
+========================================================= */
+
+const practiceToggle =
+    document.createElement(
+        'button'
+    );
+
+
+practiceToggle.className =
+    'btn';
+
+
+practiceToggle.textContent =
+    '🎓 Practice';
+
+
+practiceToggle.id =
+    'practiceToggle';
+
+
+document
+    .querySelector('.controls')
+    .appendChild(
+        practiceToggle
+    );
+
+
+practiceToggle.addEventListener(
+    'click',
+    () => {
+
+        practicePanel
+            .style.display =
+            practicePanel
+                .style.display ===
+                'none'
+                    ? ''
+                    : 'none';
+
+    }
+);
+
+
+/* =========================================================
+   INITIAL PRACTICE STATE
+========================================================= */
+
+practicePanel.style.display =
+    '';
+
+
+practiceBPM =
+    currentSong.bpm;
+
+
+practiceBPMInput.value =
+    currentSong.bpm;
+
+
+practiceBPMValue.textContent =
+    currentSong.bpm;
+
+
+updatePracticeStats();
+
+
+/* =========================================================
+   PART 5 / 5
+   FINAL PRO FEATURES
+========================================================= */
+
+
+/* =========================================================
+   FINAL STATE
+========================================================= */
+
+let metronomeEnabled =
+    false;
+
+let metronomeTimer =
+    null;
+
+let metronomeBeat =
+    0;
+
+let fullscreenEnabled =
+    false;
+
+let activeNotes =
+    new Set();
+
+let detectedChord =
+    '';
+
+let chordTimer =
+    null;
+
+
+/* =========================================================
+   CREATE FINAL TOOLBAR
+========================================================= */
+
+const finalTools =
+    document.createElement(
+        'div'
+    );
+
+
+finalTools.className =
+    'final-tools';
+
+
+finalTools.innerHTML = `
+
+    <button
+        class="btn"
+        id="metronome">
+        ♫ Metro
+    </button>
+
+    <button
+        class="btn"
+        id="saveRecording">
+        💾 Save
+    </button>
+
+    <button
+        class="btn"
+        id="loadRecording">
+        📂 Load
+    </button>
+
+    <button
+        class="btn"
+        id="exportRecording">
+        ⬇ Export
+    </button>
+
+    <button
+        class="btn"
+        id="importRecording">
+        ⬆ Import
+    </button>
+
+    <button
+        class="btn"
+        id="fullscreen">
+        ⛶ Fullscreen
+    </button>
+
+    <button
+        class="btn"
+        id="panic">
+        ⚠ Stop All
+    </button>
+
+    <input
+        id="importFile"
+        type="file"
+        accept=".json,application/json"
+        hidden>
+
+`;
+
+
+document
+    .querySelector('.topbar')
+    .appendChild(
+        finalTools
+    );
+
+
+/* =========================================================
+   FINAL TOOLBAR STYLE
+========================================================= */
+
+const finalStyle =
+    document.createElement(
+        'style'
+    );
+
+
+finalStyle.textContent = `
+
+.final-tools {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        6px;
+
+    flex-wrap:
+        wrap;
+
+}
+
+
+.chord-display {
+
+    position:
+        absolute;
+
+    right:
+        14px;
+
+    top:
+        10px;
+
+    padding:
+        6px 12px;
+
+    border-radius:
+        8px;
+
+    background:
+        rgba(229,37,42,.12);
+
+    border:
+        1px solid
+        rgba(229,37,42,.3);
+
+    color:
+        white;
+
+    font-size:
+        .72rem;
+
+    font-weight:
+        700;
+
+    pointer-events:
+        none;
+
+}
+
+
+.performance-panel {
+
+    position:
+        fixed;
+
+    right:
+        18px;
+
+    bottom:
+        58px;
+
+    z-index:
+        50;
+
+    min-width:
+        190px;
+
+    padding:
+        14px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    border-radius:
+        12px;
+
+    background:
+        rgba(14,16,21,.94);
+
+    backdrop-filter:
+        blur(15px);
+
+    box-shadow:
+        0 15px 40px
+        rgba(0,0,0,.45);
+
+}
+
+
+.performance-panel h3 {
+
+    margin:
+        0 0 10px;
+
+    font-size:
+        .78rem;
+
+}
+
+
+.performance-row {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    gap:
+        20px;
+
+    margin:
+        5px 0;
+
+    color:
+        #858b98;
+
+    font-size:
+        .7rem;
+
+}
+
+
+.performance-row strong {
+
+    color:
+        white;
+
+}
+
+
+.flash-message {
+
+    position:
+        fixed;
+
+    left:
+        50%;
+
+    top:
+        50%;
+
+    transform:
+        translate(-50%,-50%)
+        scale(.8);
+
+    z-index:
+        100;
+
+    padding:
+        12px 22px;
+
+    border-radius:
+        12px;
+
+    background:
+        rgba(10,11,14,.94);
+
+    border:
+        1px solid
+        rgba(255,255,255,.1);
+
+    color:
+        white;
+
+    font-size:
+        1rem;
+
+    font-weight:
+        800;
+
+    opacity:
+        0;
+
+    pointer-events:
+        none;
+
+    transition:
+        .18s ease;
+
+}
+
+
+.flash-message.show {
+
+    opacity:
+        1;
+
+    transform:
+        translate(-50%,-50%)
+        scale(1);
+
+}
+
+
+@media(max-width:900px) {
+
+    .final-tools {
+
+        width:
+            100%;
+
+    }
+
+}
+
+
+@media(max-width:600px) {
+
+    .final-tools .btn {
+
+        padding:
+            5px 7px;
+
+        font-size:
+            .65rem;
+
+    }
+
+    .performance-panel {
+
+        right:
+            8px;
+
+        bottom:
+            48px;
+
+    }
+
+}
+
+`;
+
+
+document.head.appendChild(
+    finalStyle
+);
+
+
+/* =========================================================
+   CHORD DISPLAY
+========================================================= */
+
+const chordDisplay =
+    document.createElement(
+        'div'
+    );
+
+
+chordDisplay.className =
+    'chord-display';
+
+
+chordDisplay.textContent =
+    'Chord: —';
+
+
+document
+    .querySelector('.visualizer')
+    .appendChild(
+        chordDisplay
+    );
+
+
+/* =========================================================
+   PERFORMANCE PANEL
+========================================================= */
+
+const performancePanel =
+    document.createElement(
+        'div'
+    );
+
+
+performancePanel.className =
+    'performance-panel';
+
+
+performancePanel.innerHTML = `
+
+    <h3>
+        🎹 Performance
+    </h3>
+
+    <div class="performance-row">
+        <span>Notes Played</span>
+        <strong id="statNotes">0</strong>
+    </div>
+
+    <div class="performance-row">
+        <span>Current Chord</span>
+        <strong id="statChord">—</strong>
+    </div>
+
+    <div class="performance-row">
+        <span>Recording Events</span>
+        <strong id="statEvents">0</strong>
+    </div>
+
+    <div class="performance-row">
+        <span>Practice Score</span>
+        <strong id="statScore">0</strong>
+    </div>
+
+`;
+
+
+document.body.appendChild(
+    performancePanel
+);
+
+
+/* =========================================================
+   FLASH MESSAGE
+========================================================= */
+
+const flash =
+    document.createElement(
+        'div'
+    );
+
+
+flash.className =
+    'flash-message';
+
+
+document.body.appendChild(
+    flash
+);
+
+
+function showFlash(
+    message
+) {
+
+    flash.textContent =
+        message;
+
+
+    flash.classList.add(
+        'show'
+    );
+
+
+    setTimeout(
+        () => {
+
+            flash.classList.remove(
+                'show'
+            );
+
+        },
+        900
+    );
+
+}
+
+
+/* =========================================================
+   METRONOME
+========================================================= */
+
+$('metronome')
+    .addEventListener(
+        'click',
+        () => {
+
+            metronomeEnabled =
+                !metronomeEnabled;
+
+
+            $('metronome')
+                .classList.toggle(
+                    'active',
+                    metronomeEnabled
+                );
+
+
+            if (
+                metronomeEnabled
+            ) {
+
+                startMetronome();
+
+            }
+
+            else {
+
+                stopMetronome();
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   START METRONOME
+========================================================= */
+
+function startMetronome() {
+
+    stopMetronome();
+
+
+    metronomeBeat =
+        0;
+
+
+    const interval =
+        60000 /
+        (
+            practiceBPM ||
+            100
+        );
+
+
+    metronomeTimer =
+        setInterval(
+            tickMetronome,
+            interval
+        );
+
+
+    tickMetronome();
+
+}
+
+
+/* =========================================================
+   METRONOME TICK
+========================================================= */
+
+function tickMetronome() {
+
+    if (
+        !audioContext ||
+        !started
+    ) {
+
+        return;
+
+    }
+
+
+    metronomeBeat++;
+
+
+    const accent =
+        metronomeBeat % 4 === 1;
+
+
+    const oscillator =
+        audioContext
+            .createOscillator();
+
+
+    const gain =
+        audioContext
+            .createGain();
+
+
+    oscillator.type =
+        'sine';
+
+
+    oscillator.frequency.value =
+        accent
+            ? 1200
+            : 850;
+
+
+    const time =
+        audioContext.currentTime;
+
+
+    gain.gain.setValueAtTime(
+        .0001,
+        time
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+        accent
+            ? .18
+            : .10,
+        time + .005
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+        .0001,
+        time + .08
+    );
+
+
+    oscillator.connect(
+        gain
+    );
+
+
+    gain.connect(
+        masterGain
+    );
+
+
+    oscillator.start(
+        time
+    );
+
+
+    oscillator.stop(
+        time + .1
+    );
+
+}
+
+
+/* =========================================================
+   STOP METRONOME
+========================================================= */
+
+function stopMetronome() {
+
+    if (
+        metronomeTimer
+    ) {
+
+        clearInterval(
+            metronomeTimer
+        );
+
+    }
+
+
+    metronomeTimer =
+        null;
+
+}
+
+
+/* =========================================================
+   ACTIVE NOTE TRACKING
+========================================================= */
+
+function addActiveNote(
+    midi
+) {
+
+    activeNotes.add(
+        midi
+    );
+
+
+    detectChord();
+
+}
+
+
+function removeActiveNote(
+    midi
+) {
+
+    activeNotes.delete(
+        midi
+    );
+
+
+    detectChord();
+
+}
+
+
+/* =========================================================
+   CHORD NAMES
+========================================================= */
+
+const CHORD_PATTERNS = [
+
+    {
+        name: '',
+        intervals: [0,4,7]
+    },
+
+    {
+        name: 'm',
+        intervals: [0,3,7]
+    },
+
+    {
+        name: 'dim',
+        intervals: [0,3,6]
+    },
+
+    {
+        name: 'aug',
+        intervals: [0,4,8]
+    },
+
+    {
+        name: 'sus2',
+        intervals: [0,2,7]
+    },
+
+    {
+        name: 'sus4',
+        intervals: [0,5,7]
+    },
+
+    {
+        name: '7',
+        intervals: [0,4,7,10]
+    },
+
+    {
+        name: 'maj7',
+        intervals: [0,4,7,11]
+    },
+
+    {
+        name: 'm7',
+        intervals: [0,3,7,10]
+    }
+
+];
+
+
+/* =========================================================
+   DETECT CHORD
+========================================================= */
+
+function detectChord() {
+
+    if (
+        activeNotes.size <
+        3
+    ) {
+
+        detectedChord =
+            '';
+
+
+        updateChordDisplay();
+
+
+        return;
+
+    }
+
+
+    const notes =
+        [...activeNotes]
+            .sort(
+                (a,b) =>
+                    a - b
+            );
+
+
+    const uniqueClasses =
+        [...new Set(
+            notes.map(
+                midi =>
+                    midi % 12
+            )
+        )];
+
+
+    let bestMatch =
+        null;
+
+
+    for (
+        const root of uniqueClasses
+    ) {
+
+        const intervals =
+            uniqueClasses
+                .map(
+                    note =>
+                        (
+                            note -
+                            root +
+                            12
+                        ) % 12
+                )
+                .sort(
+                    (a,b) =>
+                        a - b
+                );
+
+
+        for (
+            const pattern
+            of CHORD_PATTERNS
+        ) {
+
+            if (
+                arraysEqual(
+                    intervals,
+                    pattern.intervals
+                )
+            ) {
+
+                bestMatch = {
+
+                    root,
+
+                    suffix:
+                        pattern.name
+
+                };
+
+
+                break;
+
+            }
+
+        }
+
+
+        if (
+            bestMatch
+        ) {
+
+            break;
+
+        }
+
+    }
+
+
+    if (
+        bestMatch
+    ) {
+
+        detectedChord =
+            NAMES[
+                bestMatch.root
+            ] +
+            bestMatch.suffix;
+
+    }
+
+    else {
+
+        detectedChord =
+            'Unknown';
+
+    }
+
+
+    updateChordDisplay();
+
+}
+
+
+/* =========================================================
+   ARRAY COMPARISON
+========================================================= */
+
+function arraysEqual(
+    a,
+    b
+) {
+
+    if (
+        a.length !==
+        b.length
+    ) {
+
+        return false;
+
+    }
+
+
+    for (
+        let i = 0;
+        i < a.length;
+        i++
+    ) {
+
+        if (
+            a[i] !==
+            b[i]
+        ) {
+
+            return false;
+
+        }
+
+    }
+
+
+    return true;
+
+}
+
+
+/* =========================================================
+   UPDATE CHORD DISPLAY
+========================================================= */
+
+function updateChordDisplay() {
+
+    chordDisplay.textContent =
+        detectedChord
+            ? `Chord: ${detectedChord}`
+            : 'Chord: —';
+
+
+    $('statChord')
+        .textContent =
+        detectedChord ||
+        '—';
+
+}
+
+
+/* =========================================================
+   PATCH NOTE ON FOR CHORD TRACKING
+========================================================= */
+
+const previousNoteOn =
+    noteOn;
+
+
+noteOn = function (
+    midi,
+    velocity = 0.75
+) {
+
+    previousNoteOn(
+        midi,
+        velocity
+    );
+
+
+    addActiveNote(
+        midi
+    );
+
+};
+
+
+/* =========================================================
+   PATCH NOTE OFF FOR CHORD TRACKING
+========================================================= */
+
+const previousNoteOff =
+    noteOff;
+
+
+noteOff = function (
+    midi,
+    release
+) {
+
+    previousNoteOff(
+        midi,
+        release
+    );
+
+
+    removeActiveNote(
+        midi
+    );
+
+};
+
+
+/* =========================================================
+   PERFORMANCE STATISTICS
+========================================================= */
+
+let lifetimeNotes =
+    0;
+
+
+const previousRecordNoteOn =
+    recordNoteOn;
+
+
+recordNoteOn = function (
+    midi,
+    velocity
+) {
+
+    previousRecordNoteOn(
+        midi,
+        velocity
+    );
+
+
+    lifetimeNotes++;
+
+
+    updatePerformanceStats();
+
+};
+
+
+/* =========================================================
+   UPDATE PERFORMANCE STATS
+========================================================= */
+
+function updatePerformanceStats() {
+
+    $('statNotes')
+        .textContent =
+        lifetimeNotes;
+
+
+    $('statEvents')
+        .textContent =
+        recordedEvents.length;
+
+
+    $('statScore')
+        .textContent =
+        practiceScore;
+
+}
+
+
+/* =========================================================
+   SAVE RECORDING
+========================================================= */
+
+$('saveRecording')
+    .addEventListener(
+        'click',
+        () => {
+
+            if (
+                !recordedEvents.length
+            ) {
+
+                showFlash(
+                    'Nothing to save'
+                );
+
+                return;
+
+            }
+
+
+            const data = {
+
+                version:
+                    1,
+
+                instrument:
+                    $('instrument').value,
+
+                events:
+                    recordedEvents,
+
+                bpm:
+                    practiceBPM,
+
+                created:
+                    new Date()
+                        .toISOString()
+
+            };
+
+
+            localStorage.setItem(
+                'virtualPianoRecording',
+                JSON.stringify(
+                    data
+                )
+            );
+
+
+            showFlash(
+                'Recording Saved ✓'
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   LOAD RECORDING
+========================================================= */
+
+$('loadRecording')
+    .addEventListener(
+        'click',
+        () => {
+
+            const raw =
+                localStorage.getItem(
+                    'virtualPianoRecording'
+                );
+
+
+            if (!raw) {
+
+                showFlash(
+                    'No saved recording'
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                const data =
+                    JSON.parse(
+                        raw
+                    );
+
+
+                if (
+                    !Array.isArray(
+                        data.events
+                    )
+                ) {
+
+                    throw new Error(
+                        'Invalid recording'
+                    );
+
+                }
+
+
+                recordedEvents =
+                    data.events;
+
+
+                if (
+                    data.instrument &&
+                    INSTRUMENTS[
+                        data.instrument
+                    ]
+                ) {
+
+                    $('instrument')
+                        .value =
+                        data.instrument;
+
+                }
+
+
+                if (
+                    data.bpm
+                ) {
+
+                    practiceBPM =
+                        data.bpm;
+
+                    practiceBPMInput.value =
+                        data.bpm;
+
+                    practiceBPMValue.textContent =
+                        data.bpm;
+
+                }
+
+
+                $('play').disabled =
+                    false;
+
+
+                updateRecordingStatus();
+
+
+                updatePerformanceStats();
+
+
+                showFlash(
+                    'Recording Loaded ✓'
+                );
+
+            }
+
+            catch (error) {
+
+                showFlash(
+                    'Invalid recording'
+                );
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   EXPORT RECORDING
+========================================================= */
+
+$('exportRecording')
+    .addEventListener(
+        'click',
+        () => {
+
+            if (
+                !recordedEvents.length
+            ) {
+
+                showFlash(
+                    'Nothing to export'
+                );
+
+                return;
+
+            }
+
+
+            const data = {
+
+                app:
+                    'Virtual Piano Pro X',
+
+                version:
+                    1,
+
+                instrument:
+                    $('instrument').value,
+
+                bpm:
+                    practiceBPM,
+
+                events:
+                    recordedEvents,
+
+                exported:
+                    new Date()
+                        .toISOString()
+
+            };
+
+
+            const blob =
+                new Blob(
+                    [
+                        JSON.stringify(
+                            data,
+                            null,
+                            2
+                        )
+                    ],
+                    {
+                        type:
+                            'application/json'
+                    }
+                );
+
+
+            const url =
+                URL.createObjectURL(
+                    blob
+                );
+
+
+            const link =
+                document.createElement(
+                    'a'
+                );
+
+
+            link.href =
+                url;
+
+
+            link.download =
+                'virtual-piano-recording.json';
+
+
+            link.click();
+
+
+            URL.revokeObjectURL(
+                url
+            );
+
+
+            showFlash(
+                'Recording Exported ✓'
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   IMPORT RECORDING
+========================================================= */
+
+$('importRecording')
+    .addEventListener(
+        'click',
+        () => {
+
+            $('importFile').click();
+
+        }
+    );
+
+
+/* =========================================================
+   IMPORT FILE
+========================================================= */
+
+$('importFile')
+    .addEventListener(
+        'change',
+        async event => {
+
+            const file =
+                event.target.files[0];
+
+
+            if (!file) {
+
+                return;
+
+            }
+
+
+            try {
+
+                const text =
+                    await file.text();
+
+
+                const data =
+                    JSON.parse(
+                        text
+                    );
+
+
+                if (
+                    !Array.isArray(
+                        data.events
+                    )
+                ) {
+
+                    throw new Error(
+                        'Invalid file'
+                    );
+
+                }
+
+
+                recordedEvents =
+                    data.events;
+
+
+                if (
+                    data.instrument &&
+                    INSTRUMENTS[
+                        data.instrument
+                    ]
+                ) {
+
+                    $('instrument')
+                        .value =
+                        data.instrument;
+
+                }
+
+
+                if (
+                    data.bpm
+                ) {
+
+                    practiceBPM =
+                        data.bpm;
+
+                    practiceBPMInput.value =
+                        data.bpm;
+
+                    practiceBPMValue.textContent =
+                        data.bpm;
+
+                }
+
+
+                $('play').disabled =
+                    false;
+
+
+                updateRecordingStatus();
+
+
+                updatePerformanceStats();
+
+
+                showFlash(
+                    'Recording Imported ✓'
+                );
+
+            }
+
+            catch (_) {
+
+                showFlash(
+                    'Import failed'
+                );
+
+            }
+
+
+            event.target.value =
+                '';
+
+        }
+    );
+
+
+/* =========================================================
+   FULLSCREEN
+========================================================= */
+
+$('fullscreen')
+    .addEventListener(
+        'click',
+        async () => {
+
+            try {
+
+                if (
+                    !document.fullscreenElement
+                ) {
+
+                    await document
+                        .documentElement
+                        .requestFullscreen();
+
+
+                    fullscreenEnabled =
+                        true;
+
+
+                    $('fullscreen')
+                        .textContent =
+                        '⛶ Exit';
+
+                }
+
+                else {
+
+                    await document
+                        .exitFullscreen();
+
+
+                    fullscreenEnabled =
+                        false;
+
+
+                    $('fullscreen')
+                        .textContent =
+                        '⛶ Fullscreen';
+
+                }
+
+            }
+
+            catch (_) {
+
+                showFlash(
+                    'Fullscreen unavailable'
+                );
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   FULLSCREEN STATE
+========================================================= */
+
+document.addEventListener(
+    'fullscreenchange',
+    () => {
+
+        fullscreenEnabled =
+            Boolean(
+                document.fullscreenElement
+            );
+
+
+        $('fullscreen')
+            .textContent =
+            fullscreenEnabled
+                ? '⛶ Exit'
+                : '⛶ Fullscreen';
+
+    }
+);
+
+
+/* =========================================================
+   PANIC BUTTON
+========================================================= */
+
+$('panic')
+    .addEventListener(
+        'click',
+        () => {
+
+            panicStop();
+
+        }
+    );
+
+
+/* =========================================================
+   PANIC STOP
+========================================================= */
+
+function panicStop() {
+
+    stopPlayback();
+
+
+    stopMetronome();
+
+
+    metronomeEnabled =
+        false;
+
+
+    $('metronome')
+        .classList.remove(
+            'active'
+        );
+
+
+    releaseEverything();
+
+
+    activeNotes.clear();
+
+
+    detectedChord =
+        '';
+
+
+    updateChordDisplay();
+
+
+    showFlash(
+        'All Notes Stopped'
+    );
+
+}
+
+
+/* =========================================================
+   SAVE SETTINGS
+========================================================= */
+
+function saveSettings() {
+
+    const settings = {
+
+        instrument:
+            $('instrument').value,
+
+        volume:
+            $('volume').value,
+
+        reverb:
+            $('reverb').value,
+
+        octave:
+            octaveShift,
+
+        bpm:
+            practiceBPM
+
+    };
+
+
+    localStorage.setItem(
+        'virtualPianoSettings',
+        JSON.stringify(
+            settings
+        )
+    );
+
+}
+
+
+/* =========================================================
+   LOAD SETTINGS
+========================================================= */
+
+function loadSettings() {
+
+    const raw =
+        localStorage.getItem(
+            'virtualPianoSettings'
+        );
+
+
+    if (!raw) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const settings =
+            JSON.parse(
+                raw
+            );
+
+
+        if (
+            settings.instrument &&
+            INSTRUMENTS[
+                settings.instrument
+            ]
+        ) {
+
+            $('instrument')
+                .value =
+                settings.instrument;
+
+        }
+
+
+        if (
+            settings.volume !==
+            undefined
+        ) {
+
+            $('volume')
+                .value =
+                settings.volume;
+
+        }
+
+
+        if (
+            settings.reverb !==
+            undefined
+        ) {
+
+            $('reverb')
+                .value =
+                settings.reverb;
+
+        }
+
+
+        if (
+            typeof settings.octave ===
+            'number'
+        ) {
+
+            octaveShift =
+                Math.max(
+                    -1,
+                    Math.min(
+                        2,
+                        settings.octave
+                    )
+                );
+
+
+            updateKeyboardMap();
+
+        }
+
+
+        if (
+            settings.bpm
+        ) {
+
+            practiceBPM =
+                settings.bpm;
+
+
+            practiceBPMInput.value =
+                settings.bpm;
+
+
+            practiceBPMValue.textContent =
+                settings.bpm;
+
+        }
+
+    }
+
+    catch (_) {}
+
+}
+
+
+/* =========================================================
+   AUTO SAVE SETTINGS
+========================================================= */
+
+[
+    'instrument',
+    'volume',
+    'reverb'
+]
+.forEach(
+    id => {
+
+        $(id)
+            .addEventListener(
+                'change',
+                saveSettings
+            );
+
+        $(id)
+            .addEventListener(
+                'input',
+                saveSettings
+            );
+
+    }
+);
+
+
+/* =========================================================
+   SAVE OCTAVE
+========================================================= */
+
+$('octDown')
+    .addEventListener(
+        'click',
+        saveSettings
+    );
+
+
+$('octUp')
+    .addEventListener(
+        'click',
+        saveSettings
+    );
+
+
+/* =========================================================
+   KEYBOARD SHORTCUTS
+========================================================= */
+
+window.addEventListener(
+    'keydown',
+    event => {
+
+        if (
+            event.ctrlKey ||
+            event.metaKey ||
+            event.altKey
+        ) {
+
+            return;
+
+        }
+
+
+        /* -----------------------------------------------
+           R = RECORD
+        ----------------------------------------------- */
+
+        if (
+            event.key.toLowerCase() ===
+            'r'
+        ) {
+
+            if (
+                event.target.tagName ===
+                'INPUT'
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                !event.repeat
+            ) {
+
+                $('record').click();
+
+            }
+
+
+            return;
+
+        }
+
+
+        /* -----------------------------------------------
+           M = METRONOME
+        ----------------------------------------------- */
+
+        if (
+            event.key.toLowerCase() ===
+            'm'
+        ) {
+
+            if (
+                !event.repeat
+            ) {
+
+                $('metronome').click();
+
+            }
+
+
+            return;
+
+        }
+
+
+        /* -----------------------------------------------
+           P = PLAY RECORDING
+        ----------------------------------------------- */
+
+        if (
+            event.key.toLowerCase() ===
+            'p'
+        ) {
+
+            if (
+                !event.repeat &&
+                !recording
+            ) {
+
+                $('play').click();
+
+            }
+
+
+            return;
+
+        }
+
+
+        /* -----------------------------------------------
+           ESCAPE = PANIC
+        ----------------------------------------------- */
+
+        if (
+            event.key ===
+            'Escape'
+        ) {
+
+            panicStop();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   PERFORMANCE PANEL REFRESH
+========================================================= */
+
+setInterval(
+    () => {
+
+        updatePerformanceStats();
+
+    },
+    250
+);
+
+
+/* =========================================================
+   INITIAL SETTINGS
+========================================================= */
+
+loadSettings();
+
+
+/* =========================================================
+   INITIAL AUDIO MIX
+========================================================= */
+
+function refreshAudioMix() {
+
+    if (
+        audioContext &&
+        masterGain
+    ) {
+
+        updateMix();
+
+    }
+
+}
+
+
+setTimeout(
+    refreshAudioMix,
+    100
+);
+
+
+/* =========================================================
+   MOBILE TOUCH SAFETY
+========================================================= */
+
+document.addEventListener(
+    'touchstart',
+    event => {
+
+        if (
+            event.target.closest(
+                '.key'
+            )
+        ) {
+
+            event.preventDefault();
+
+        }
+
+    },
+    {
+        passive: false
+    }
+);
+
+
+/* =========================================================
+   PREVENT ACCIDENTAL PAGE SCROLL
+========================================================= */
+
+document.addEventListener(
+    'gesturestart',
+    event => {
+
+        event.preventDefault();
+
+    }
+);
+
+
+/* =========================================================
+   FINAL CLEANUP
+========================================================= */
+
+window.addEventListener(
+    'beforeunload',
+    () => {
+
+        stopMetronome();
+
+
+        stopPlayback();
+
+
+        releaseEverything();
+
+
+        saveSettings();
+
+    }
+);
+
+
+/* =========================================================
+   FINAL APPLICATION STATUS
+========================================================= */
+
+$('statusText')
+    .textContent =
+    'Virtual Piano Pro X';
+
+
+/* =========================================================
+   PART 5 COMPLETE
+========================================================= */
+
+
 })();
+
 </script>
+
 </body>
+
 </html>
